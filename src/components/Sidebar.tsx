@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -9,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Sidebar: React.FC = () => {
   const { state, dispatch } = useGraphContext();
@@ -135,6 +135,11 @@ const Sidebar: React.FC = () => {
               dispatch({ type: 'SET_TOTAL_MST_COST', cost: result.value.totalCost });
             }
             
+            // Add final path step if provided
+            if (result.value.pathStep) {
+              dispatch({ type: 'ADD_PATH_STEP', step: result.value.pathStep });
+            }
+            
             toast({
               title: "Algorithm Complete",
               description: result.value.message,
@@ -142,6 +147,11 @@ const Sidebar: React.FC = () => {
           }
         } else {
           dispatch({ type: 'SET_CURRENT_STEP', step: result.value });
+          
+          // Add path step if provided
+          if (result.value.pathStep) {
+            dispatch({ type: 'ADD_PATH_STEP', step: result.value.pathStep });
+          }
           
           // Show step message
           if (result.value.message) {
@@ -159,6 +169,13 @@ const Sidebar: React.FC = () => {
       return () => clearInterval(intervalId);
     }
   }, [state.isRunning, generator, state.speed, dispatch, toast]);
+  
+  // Clear path when changing algorithms or resetting
+  useEffect(() => {
+    if (!state.isRunning) {
+      dispatch({ type: 'CLEAR_PATH' });
+    }
+  }, [state.algorithm, dispatch]);
   
   // Get the current algorithm name for display
   const getAlgorithmName = () => {
@@ -183,9 +200,10 @@ const Sidebar: React.FC = () => {
       
       {/* Tabs for different sections */}
       <Tabs defaultValue="algorithms" className="flex-1 flex flex-col">
-        <TabsList className="grid grid-cols-3 mb-4">
+        <TabsList className="grid grid-cols-4 mb-4">
           <TabsTrigger value="algorithms">Algorithms</TabsTrigger>
           <TabsTrigger value="controls">Controls</TabsTrigger>
+          <TabsTrigger value="path">Path</TabsTrigger>
           <TabsTrigger value="info">Info</TabsTrigger>
         </TabsList>
         
@@ -351,6 +369,41 @@ const Sidebar: React.FC = () => {
               <p><span className="font-mono bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
               <p><span className="font-mono bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
             </div>
+          </div>
+        </TabsContent>
+        
+        {/* Path Tab */}
+        <TabsContent value="path" className="flex-1">
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-white">Algorithm Path</h2>
+            
+            {state.pathTaken.length > 0 ? (
+              <ScrollArea className="h-[400px] border rounded-md border-gray-700 bg-gray-900 p-3">
+                <ol className="space-y-2 text-sm text-gray-300 list-decimal list-inside">
+                  {state.pathTaken.map((step, index) => (
+                    <li key={index} className="py-1 border-b border-gray-800 last:border-0">
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </ScrollArea>
+            ) : (
+              <div className="flex justify-center items-center h-[200px] text-gray-500">
+                Run an algorithm to see the path steps
+              </div>
+            )}
+            
+            {/* Total MST Cost Display */}
+            {shouldShowTotalCost() && (
+              <div className="mt-3 p-2 bg-gray-900 rounded-md border border-green-500">
+                <p className="text-sm text-white font-medium">
+                  Minimum Spanning Tree Total Cost:
+                </p>
+                <p className="text-xl text-green-400 font-bold text-center">
+                  {state.totalMSTCost}
+                </p>
+              </div>
+            )}
           </div>
         </TabsContent>
         

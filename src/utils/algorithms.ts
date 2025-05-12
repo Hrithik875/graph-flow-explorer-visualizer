@@ -8,6 +8,7 @@ export interface AlgorithmStep {
   edgeId?: string;
   message: string;
   totalCost?: number; // Adding total cost for MST algorithms
+  pathStep?: string; // Add path step information
 }
 
 // Prim's Algorithm (MST)
@@ -23,11 +24,14 @@ export function* primMST(graph: GraphData, startNodeId: string): Generator<Algor
   const mstEdges: EdgeData[] = [];
   let totalCost = 0;
   
+  const startNodeLabel = nodes.find(n => n.id === startNodeId)?.label || startNodeId;
+  
   // Mark start node as visited
   yield { 
     type: 'visitNode', 
     nodeId: startNodeId, 
-    message: `Starting Prim's algorithm from node ${startNodeId}`
+    message: `Starting Prim's algorithm from node ${startNodeLabel}`,
+    pathStep: `Starting from node ${startNodeLabel}`
   };
   
   // While we haven't visited all nodes
@@ -91,19 +95,24 @@ export function* primMST(graph: GraphData, startNodeId: string): Generator<Algor
     totalCost += minEdge.weight;
     visited.add(nextNode);
     
+    const fromNodeLabel = nodes.find(n => n.id === minEdge.from)?.label || minEdge.from;
+    const toNodeLabel = nodes.find(n => n.id === minEdge.to)?.label || minEdge.to;
+    
     // Highlight the new MST edge and node
     yield { 
       type: 'addToMST', 
       edgeId: minEdge.id,
       nodeId: nextNode,
-      message: `Adding edge ${minEdge.id} to MST and visiting node ${nextNode}. Current cost: ${totalCost}`
+      message: `Adding edge ${minEdge.id} to MST and visiting node ${toNodeLabel}. Current cost: ${totalCost}`,
+      pathStep: `Added edge ${fromNodeLabel} → ${toNodeLabel} (weight: ${minEdge.weight})`
     };
   }
   
   yield { 
     type: 'done', 
     message: `Prim's algorithm completed. MST has ${mstEdges.length} edges.`,
-    totalCost
+    totalCost,
+    pathStep: `Algorithm complete! Total MST cost: ${totalCost}`
   };
 }
 
@@ -150,7 +159,11 @@ export function* kruskalMST(graph: GraphData): Generator<AlgorithmStep> {
   const mstEdges: EdgeData[] = [];
   let totalCost = 0;
   
-  yield { type: 'done', message: `Starting Kruskal's algorithm with ${sortedEdges.length} edges` };
+  yield { 
+    type: 'done', 
+    message: `Starting Kruskal's algorithm with ${sortedEdges.length} edges`,
+    pathStep: `Starting Kruskal's algorithm with ${sortedEdges.length} edges`
+  };
   
   // Process each edge in order
   for (const edge of sortedEdges) {
@@ -170,11 +183,15 @@ export function* kruskalMST(graph: GraphData): Generator<AlgorithmStep> {
       totalCost += edge.weight;
       union(fromRoot, toRoot);
       
+      const fromNodeLabel = graph.nodes.find(n => n.id === edge.from)?.label || edge.from;
+      const toNodeLabel = graph.nodes.find(n => n.id === edge.to)?.label || edge.to;
+      
       yield { 
         type: 'addToMST', 
         edgeId: edge.id,
         nodeId: edge.to,
-        message: `Adding edge ${edge.id} to MST. Current cost: ${totalCost}`
+        message: `Adding edge ${edge.id} to MST. Current cost: ${totalCost}`,
+        pathStep: `Added edge ${fromNodeLabel} → ${toNodeLabel} (weight: ${edge.weight})`
       };
       
       // If we have enough edges for an MST
@@ -195,13 +212,15 @@ export function* kruskalMST(graph: GraphData): Generator<AlgorithmStep> {
     yield { 
       type: 'done', 
       message: 'Graph is disconnected, MST cannot be completed',
-      totalCost
+      totalCost,
+      pathStep: `Algorithm incomplete. Graph is disconnected. Current cost: ${totalCost}`
     };
   } else {
     yield { 
       type: 'done', 
       message: `Kruskal's algorithm completed. MST has ${mstEdges.length} edges.`,
-      totalCost
+      totalCost,
+      pathStep: `Algorithm complete! Total MST cost: ${totalCost}`
     };
   }
 }

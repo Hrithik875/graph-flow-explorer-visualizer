@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { GraphData, NodeData, EdgeData, generateId, calculateNewNodePosition } from '../utils/graphUtils';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -17,6 +16,7 @@ interface GraphState {
   currentStep: AlgorithmStep | null;
   startNodeId: string | null;
   totalMSTCost: number | null;
+  pathTaken: string[]; // Array to store the path steps
 }
 
 // Graph Action Types
@@ -36,7 +36,9 @@ type GraphAction =
   | { type: 'RESET_GRAPH_STATUS' }
   | { type: 'CLEAR_GRAPH' }
   | { type: 'SET_START_NODE'; nodeId: string | null }
-  | { type: 'SET_TOTAL_MST_COST'; cost: number | null };
+  | { type: 'SET_TOTAL_MST_COST'; cost: number | null }
+  | { type: 'ADD_PATH_STEP'; step: string }
+  | { type: 'CLEAR_PATH' };
 
 // Create the context
 interface GraphContextType {
@@ -57,6 +59,7 @@ const initialState: GraphState = {
   currentStep: null,
   startNodeId: null,
   totalMSTCost: null,
+  pathTaken: [], // Initialize empty path
 };
 
 // Reducer function
@@ -193,6 +196,7 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         ...state,
         algorithm: action.algorithm,
         totalMSTCost: null, // Reset cost when changing algorithm
+        pathTaken: [], // Reset path when changing algorithm
       };
     }
     
@@ -277,6 +281,7 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         },
         currentStep: null,
         totalMSTCost: null, // Reset cost when resetting graph
+        pathTaken: [], // Reset path when resetting graph
       };
     }
     
@@ -301,7 +306,21 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         },
       };
     }
-
+    
+    case 'ADD_PATH_STEP': {
+      return {
+        ...state,
+        pathTaken: [...state.pathTaken, action.step],
+      };
+    }
+    
+    case 'CLEAR_PATH': {
+      return {
+        ...state,
+        pathTaken: [],
+      };
+    }
+    
     case 'SET_TOTAL_MST_COST': {
       return {
         ...state,
