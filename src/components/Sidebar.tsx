@@ -130,6 +130,11 @@ const Sidebar: React.FC = () => {
           
           // Show final message if available
           if (result.value) {
+            // Update total MST cost if provided (for MST algorithms)
+            if (result.value.totalCost !== undefined) {
+              dispatch({ type: 'SET_TOTAL_MST_COST', cost: result.value.totalCost });
+            }
+            
             toast({
               title: "Algorithm Complete",
               description: result.value.message,
@@ -164,6 +169,12 @@ const Sidebar: React.FC = () => {
       case 'dfs': return "Depth-First Search (DFS)";
       default: return "No Algorithm Selected";
     }
+  };
+  
+  // Determine if total cost should be shown (for MST algorithms)
+  const shouldShowTotalCost = () => {
+    return (state.algorithm === 'prim' || state.algorithm === 'kruskal') && 
+           state.totalMSTCost !== null;
   };
   
   return (
@@ -233,6 +244,19 @@ const Sidebar: React.FC = () => {
                   Start Node: {state.graph.nodes.find(n => n.id === state.startNodeId)?.label}
                 </p>
               )}
+              
+              {/* Total MST Cost Display */}
+              {shouldShowTotalCost() && (
+                <div className="mt-3 p-2 bg-gray-900 rounded-md border border-green-500">
+                  <p className="text-sm text-white font-medium">
+                    Minimum Spanning Tree Total Cost:
+                  </p>
+                  <p className="text-xl text-green-400 font-bold text-center">
+                    {state.totalMSTCost}
+                  </p>
+                </div>
+              )}
+              
               {state.currentStep && (
                 <p className="text-sm text-gray-300 mt-2">
                   {state.currentStep.message}

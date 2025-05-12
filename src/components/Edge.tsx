@@ -14,18 +14,12 @@ interface EdgeProps {
 const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY }) => {
   const { state, dispatch } = useGraphContext();
   
-  // Get color based on edge status and weight
+  // Get color based on edge status
   const getEdgeColor = () => {
-    // First handle edge status
     switch (edge.status) {
       case 'selected': return 'stroke-edge-selected';
       case 'mst': return 'stroke-edge-mst';
-      default: {
-        // For default edges, use a color scale based on weight
-        if (edge.weight <= 3) return 'stroke-edge-low-cost';
-        if (edge.weight <= 6) return 'stroke-edge-medium-cost';
-        return 'stroke-edge-high-cost';
-      }
+      default: return 'stroke-edge-default';
     }
   };
   
@@ -74,16 +68,16 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
         style={{ cursor: 'pointer' }}
       />
       
-      {/* Weight display */}
+      {/* Weight display - enhanced */}
       <foreignObject
-        x={midpoint.x - 15}
-        y={midpoint.y - 15}
-        width={30}
-        height={30}
+        x={midpoint.x - 18}
+        y={midpoint.y - 18}
+        width={36}
+        height={36}
         onClick={handleClick}
         style={{ cursor: 'pointer' }}
       >
-        <div className="bg-white bg-opacity-80 rounded-full w-full h-full flex items-center justify-center text-xs font-bold border border-gray-300 shadow-sm">
+        <div className={`${edge.status === 'mst' ? 'bg-green-100 border-green-500' : 'bg-white border-gray-300'} bg-opacity-90 rounded-full w-full h-full flex items-center justify-center text-sm font-bold border-2 shadow-sm`}>
           {edge.weight}
         </div>
       </foreignObject>

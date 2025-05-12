@@ -16,6 +16,7 @@ interface GraphState {
   speed: number;
   currentStep: AlgorithmStep | null;
   startNodeId: string | null;
+  totalMSTCost: number | null;
 }
 
 // Graph Action Types
@@ -34,7 +35,8 @@ type GraphAction =
   | { type: 'SET_CURRENT_STEP'; step: AlgorithmStep | null }
   | { type: 'RESET_GRAPH_STATUS' }
   | { type: 'CLEAR_GRAPH' }
-  | { type: 'SET_START_NODE'; nodeId: string | null };
+  | { type: 'SET_START_NODE'; nodeId: string | null }
+  | { type: 'SET_TOTAL_MST_COST'; cost: number | null };
 
 // Create the context
 interface GraphContextType {
@@ -54,6 +56,7 @@ const initialState: GraphState = {
   speed: 500, // milliseconds between steps
   currentStep: null,
   startNodeId: null,
+  totalMSTCost: null,
 };
 
 // Reducer function
@@ -189,6 +192,7 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
       return {
         ...state,
         algorithm: action.algorithm,
+        totalMSTCost: null, // Reset cost when changing algorithm
       };
     }
     
@@ -272,6 +276,7 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           edges: state.graph.edges.map(edge => ({ ...edge, status: 'default' })),
         },
         currentStep: null,
+        totalMSTCost: null, // Reset cost when resetting graph
       };
     }
     
@@ -294,6 +299,13 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           })),
           edges: state.graph.edges.map(edge => ({ ...edge, status: 'default' })),
         },
+      };
+    }
+
+    case 'SET_TOTAL_MST_COST': {
+      return {
+        ...state,
+        totalMSTCost: action.cost,
       };
     }
     
