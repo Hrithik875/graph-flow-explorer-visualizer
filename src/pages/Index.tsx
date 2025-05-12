@@ -3,6 +3,7 @@ import React from 'react';
 import GraphBoard from '../components/GraphBoard';
 import Sidebar from '../components/Sidebar';
 import { GraphProvider } from '../context/GraphContext';
+import { Toaster } from '@/components/ui/toaster';
 
 const Index = () => {
   return (
@@ -12,6 +13,7 @@ const Index = () => {
         <div className="flex-1 p-4">
           <GraphBoard />
         </div>
+        <Toaster />
       </div>
     </GraphProvider>
   );

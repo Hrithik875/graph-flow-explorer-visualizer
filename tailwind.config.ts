@@ -75,6 +75,9 @@ export default {
 					default: '#90A4AE', // Default edge
 					mst: '#00C853', // Edge in MST
 					selected: '#FF5252', // Selected edge
+					'low-cost': '#33C3F0', // Low cost edge (weight <= 3)
+					'medium-cost': '#F97316', // Medium cost edge (weight <= 6)
+					'high-cost': '#9b87f5', // High cost edge (weight > 6)
 				}
 			},
 			borderRadius: {
