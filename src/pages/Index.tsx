@@ -1,13 +1,19 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import GraphBoard from '../components/GraphBoard';
+import Sidebar from '../components/Sidebar';
+import { GraphProvider } from '../context/GraphContext';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <GraphProvider>
+      <div className="flex h-screen w-full bg-gray-900">
+        <Sidebar />
+        <div className="flex-1 p-4">
+          <GraphBoard />
+        </div>
       </div>
-    </div>
+    </GraphProvider>
   );
 };
 

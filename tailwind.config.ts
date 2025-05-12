@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom colors for graph visualization
+				node: {
+					default: '#4285F4', // Default node color
+					selected: '#FF5252', // Selected node
+					start: '#00C853', // Start node for traversals
+					visited: '#7E57C2', // Visited node
+					current: '#FFC107', // Current node in traversal
+				},
+				edge: {
+					default: '#90A4AE', // Default edge
+					mst: '#00C853', // Edge in MST
+					selected: '#FF5252', // Selected edge
 				}
 			},
 			borderRadius: {
@@ -84,11 +98,16 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-fade': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-fade': 'pulse-fade 1.5s ease-in-out infinite'
 			}
 		}
 	},
