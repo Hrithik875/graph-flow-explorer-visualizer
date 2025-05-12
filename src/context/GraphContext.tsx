@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { GraphData, NodeData, EdgeData, generateId, calculateNewNodePosition } from '../utils/graphUtils';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -17,6 +18,8 @@ interface GraphState {
   startNodeId: string | null;
   totalMSTCost: number | null;
   pathTaken: string[]; // Array to store the path steps
+  history: GraphData[]; // History for undo operations
+  historyIndex: number; // Current position in history
 }
 
 // Graph Action Types
@@ -38,7 +41,9 @@ type GraphAction =
   | { type: 'SET_START_NODE'; nodeId: string | null }
   | { type: 'SET_TOTAL_MST_COST'; cost: number | null }
   | { type: 'ADD_PATH_STEP'; step: string }
-  | { type: 'CLEAR_PATH' };
+  | { type: 'CLEAR_PATH' }
+  | { type: 'UNDO' }
+  | { type: 'REDO' };
 
 // Create the context
 interface GraphContextType {
@@ -47,6 +52,24 @@ interface GraphContextType {
 }
 
 const GraphContext = createContext<GraphContextType | undefined>(undefined);
+
+// Helper function to add to history
+const addToHistory = (state: GraphState): GraphState => {
+  // Clone the graph to avoid reference issues
+  const graphCopy = {
+    nodes: [...state.graph.nodes.map(node => ({...node}))],
+    edges: [...state.graph.edges.map(edge => ({...edge}))]
+  };
+  
+  // Create new history array up to current index (discard any forward history if we're in the middle)
+  const newHistory = state.history.slice(0, state.historyIndex + 1);
+  
+  return {
+    ...state,
+    history: [...newHistory, graphCopy], // Add current graph to history
+    historyIndex: state.historyIndex + 1 // Move index forward
+  };
+};
 
 // Initial state
 const initialState: GraphState = {
@@ -60,6 +83,8 @@ const initialState: GraphState = {
   startNodeId: null,
   totalMSTCost: null,
   pathTaken: [], // Initialize empty path
+  history: [{ nodes: [], edges: [] }], // Initialize with empty graph
+  historyIndex: 0,
 };
 
 // Reducer function
@@ -74,7 +99,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         label: (state.graph.nodes.length + 1).toString(),
         status: 'default',
       };
-      return {
+      
+      const newState = {
         ...state,
         graph: {
           ...state.graph,
@@ -83,6 +109,9 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         selectedNodeId: id,
         selectedEdgeId: null,
       };
+      
+      // Add to history
+      return addToHistory(newState);
     }
     
     case 'DELETE_NODE': {
@@ -91,7 +120,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
       const newEdges = state.graph.edges.filter(
         edge => edge.from !== action.nodeId && edge.to !== action.nodeId
       );
-      return {
+      
+      const newState = {
         ...state,
         graph: {
           nodes: newNodes,
@@ -101,6 +131,9 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         // If the start node is deleted, reset it
         startNodeId: state.startNodeId === action.nodeId ? null : state.startNodeId,
       };
+      
+      // Add to history
+      return addToHistory(newState);
     }
     
     case 'SELECT_NODE': {
@@ -117,13 +150,17 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           ? { ...node, x: action.x, y: action.y }
           : node
       );
-      return {
+      
+      const newState = {
         ...state,
         graph: {
           ...state.graph,
           nodes: newNodes,
         },
       };
+      
+      // Add to history only when drag is complete (handled in Node component)
+      return newState;
     }
     
     case 'ADD_EDGE': {
@@ -145,7 +182,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         weight: action.weight || 1,
         status: 'default',
       };
-      return {
+      
+      const newState = {
         ...state,
         graph: {
           ...state.graph,
@@ -154,11 +192,15 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         selectedEdgeId: id,
         selectedNodeId: null,
       };
+      
+      // Add to history
+      return addToHistory(newState);
     }
     
     case 'DELETE_EDGE': {
       const newEdges = state.graph.edges.filter(edge => edge.id !== action.edgeId);
-      return {
+      
+      const newState = {
         ...state,
         graph: {
           ...state.graph,
@@ -166,6 +208,9 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         },
         selectedEdgeId: null,
       };
+      
+      // Add to history
+      return addToHistory(newState);
     }
     
     case 'SELECT_EDGE': {
@@ -182,13 +227,17 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           ? { ...edge, weight: action.weight }
           : edge
       );
-      return {
+      
+      const newState = {
         ...state,
         graph: {
           ...state.graph,
           edges: newEdges,
         },
       };
+      
+      // Add to history
+      return addToHistory(newState);
     }
     
     case 'SET_ALGORITHM': {
@@ -286,10 +335,14 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
     }
     
     case 'CLEAR_GRAPH': {
-      return {
+      // Create a completely new empty state, but preserve speed
+      const newState = {
         ...initialState,
         speed: state.speed, // Preserve speed setting
       };
+      
+      // Add empty graph to history
+      return addToHistory(newState);
     }
     
     case 'SET_START_NODE': {
@@ -326,6 +379,46 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         ...state,
         totalMSTCost: action.cost,
       };
+    }
+    
+    case 'UNDO': {
+      // Check if we can undo (if we're not at the beginning of history)
+      if (state.historyIndex > 0) {
+        const newIndex = state.historyIndex - 1;
+        const previousGraph = state.history[newIndex];
+        
+        return {
+          ...state,
+          graph: previousGraph,
+          historyIndex: newIndex,
+          // Reset selections when undoing
+          selectedNodeId: null,
+          selectedEdgeId: null,
+        };
+      }
+      
+      // If we can't undo, return the current state
+      return state;
+    }
+    
+    case 'REDO': {
+      // Check if we can redo (if we're not at the end of history)
+      if (state.historyIndex < state.history.length - 1) {
+        const newIndex = state.historyIndex + 1;
+        const nextGraph = state.history[newIndex];
+        
+        return {
+          ...state,
+          graph: nextGraph,
+          historyIndex: newIndex,
+          // Reset selections when redoing
+          selectedNodeId: null,
+          selectedEdgeId: null,
+        };
+      }
+      
+      // If we can't redo, return the current state
+      return state;
     }
     
     default:

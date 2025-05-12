@@ -72,6 +72,24 @@ const Node: React.FC<NodeProps> = ({ node }) => {
     };
     
     const handleMouseUp = () => {
+      if (isDragging) {
+        // Add to history when drag is complete
+        // We need to add full graph state after move is complete
+        const updatedNodeX = node.x;
+        const updatedNodeY = node.y;
+        
+        // Manually create an ADD_NODE action to trigger history update
+        // This is a bit of a hack but ensures the move operation is recorded in history
+        dispatch({ 
+          type: 'ADD_NODE', 
+          x: updatedNodeX, 
+          y: updatedNodeY 
+        });
+        
+        // Then immediately select the node we just moved
+        dispatch({ type: 'SELECT_NODE', nodeId: node.id });
+      }
+      
       setIsDragging(false);
     };
     
@@ -84,7 +102,7 @@ const Node: React.FC<NodeProps> = ({ node }) => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dispatch, dragOffset, node.id]);
+  }, [isDragging, dispatch, dragOffset, node.id, node.x, node.y]);
   
   // Apply animation class for visited or current nodes
   const getAnimationClass = () => {
