@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { GraphData, NodeData, EdgeData, generateId } from '../utils/graphUtils';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -314,45 +315,46 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         }
         
         // Add to completed nodes if node is fully processed
-        if (step.type === 'completeNode') {
+        // This is the key fix - we need to ensure nodes are marked as completed
+        // when they are fully processed, not just for leaf nodes
+        if (step.type === 'completeNode' || step.type === 'addToMST') {
           completedNodes.add(step.nodeId);
         }
         
-        // Update node status
-        newGraph = {
-          ...newGraph,
-          nodes: newGraph.nodes.map(node => {
-            if (node.id === step.nodeId) {
-              let status: NodeData['status'] = 'default';
-              
-              if (completedNodes.has(node.id)) {
-                status = 'completed'; // Node is fully explored
-              }
-              else if (step.type === 'visitNode') {
-                status = 'current'; // Currently visiting
-              }
-              else if (visitedNodes.has(node.id)) {
-                status = 'visited'; // Already visited but not completed
-              }
-              else if (step.type === 'addToMST') {
-                status = 'completed'; // Added to MST
-                completedNodes.add(node.id); // Add to completed
-              }
-              
-              // Always prioritize start node status
-              if (node.id === state.startNodeId) {
-                status = 'start';
-              }
-              
-              return { ...node, status };
-            }
-            return node;
-          })
-        };
+        // For BFS and MST algorithms, also mark nodes as completed when they're done processing
+        if (step.type === 'done') {
+          // When algorithm is done, make sure all visited nodes are also marked as completed
+          // This ensures intermediate nodes in BFS, Prim's, and Kruskal's turn green at the end
+          if (state.algorithm === 'bfs' || state.algorithm === 'prim' || state.algorithm === 'kruskal') {
+            visitedNodes.forEach(nodeId => {
+              completedNodes.add(nodeId);
+            });
+          }
+        }
       }
       
+      // Update node status
+      newGraph = {
+        ...newGraph,
+        nodes: newGraph.nodes.map(node => {
+          if (node.id === state.startNodeId) {
+            return { ...node, status: 'start' };
+          } 
+          else if (completedNodes.has(node.id)) {
+            return { ...node, status: 'completed' };
+          }
+          else if (visitedNodes.has(node.id) && step.nodeId === node.id && step.type === 'processNode') {
+            return { ...node, status: 'current' };
+          }
+          else if (visitedNodes.has(node.id)) {
+            return { ...node, status: 'visited' };
+          }
+          return { ...node, status: 'default' };
+        })
+      };
+      
+      // Handle edge updates
       if (step.edgeId) {
-        // Update edge status
         newGraph = {
           ...newGraph,
           edges: newGraph.edges.map(edge => {
@@ -369,22 +371,21 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         };
       }
       
-      // Update all nodes based on visited and completed sets
-      newGraph = {
-        ...newGraph,
-        nodes: newGraph.nodes.map(node => {
-          if (node.id === state.startNodeId) {
-            return { ...node, status: 'start' };
-          } 
-          else if (completedNodes.has(node.id)) {
-            return { ...node, status: 'completed' };
-          }
-          else if (visitedNodes.has(node.id)) {
-            return { ...node, status: 'visited' };
-          }
-          return node;
-        })
-      };
+      // Additional check for BFS algorithm to mark nodes as completed
+      if (state.algorithm === 'bfs' && step.type === 'completeNode' && step.nodeId) {
+        completedNodes.add(step.nodeId);
+        
+        // Update the node status to completed
+        newGraph = {
+          ...newGraph,
+          nodes: newGraph.nodes.map(node => {
+            if (node.id === step.nodeId) {
+              return { ...node, status: 'completed' };
+            }
+            return node;
+          })
+        };
+      }
       
       return {
         ...state,
