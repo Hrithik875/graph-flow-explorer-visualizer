@@ -195,7 +195,7 @@ const Sidebar: React.FC = () => {
   };
   
   return (
-    <div className="w-80 h-full bg-gray-800 p-4 flex flex-col">
+    <div className="w-80 h-full bg-gray-800 p-4 flex flex-col overflow-hidden">
       <h1 className="text-2xl font-bold text-white mb-4">Algorithm Visualizer</h1>
       
       {/* Tabs for different sections */}
@@ -208,7 +208,7 @@ const Sidebar: React.FC = () => {
         </TabsList>
         
         {/* Algorithm Selection */}
-        <TabsContent value="algorithms" className="flex-1">
+        <TabsContent value="algorithms" className="flex-1 overflow-hidden flex flex-col">
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-white">Minimum Spanning Tree</h2>
             <div className="grid grid-cols-1 gap-2">
@@ -312,7 +312,7 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Controls Tab */}
-        <TabsContent value="controls" className="space-y-6 flex-1">
+        <TabsContent value="controls" className="space-y-6 flex-1 overflow-auto">
           {/* Speed Control */}
           <div>
             <Label htmlFor="speed-slider" className="text-white">
@@ -373,12 +373,12 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Path Tab */}
-        <TabsContent value="path" className="flex-1">
-          <div className="space-y-4">
+        <TabsContent value="path" className="flex-1 overflow-hidden flex flex-col">
+          <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
             <h2 className="text-lg font-semibold text-white">Algorithm Path</h2>
             
             {state.pathTaken.length > 0 ? (
-              <ScrollArea className="h-[400px] border rounded-md border-gray-700 bg-gray-900 p-3">
+              <ScrollArea className="flex-1 border rounded-md border-gray-700 bg-gray-900 p-3">
                 <ol className="space-y-2 text-sm text-gray-300 list-decimal list-inside">
                   {state.pathTaken.map((step, index) => (
                     <li key={index} className="py-1 border-b border-gray-800 last:border-0">
@@ -395,7 +395,7 @@ const Sidebar: React.FC = () => {
             
             {/* Total MST Cost Display */}
             {shouldShowTotalCost() && (
-              <div className="mt-3 p-2 bg-gray-900 rounded-md border border-green-500">
+              <div className="p-2 bg-gray-900 rounded-md border border-green-500">
                 <p className="text-sm text-white font-medium">
                   Minimum Spanning Tree Total Cost:
                 </p>
@@ -408,71 +408,75 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Info Tab */}
-        <TabsContent value="info" className="space-y-4 flex-1 overflow-auto">
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
-            <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
-              <li>Click on the canvas to create a node</li>
-              <li>Drag from one node to another to create an edge</li>
-              <li>Double-click a node to set it as the start node</li>
-              <li>Click an edge to select it and modify its weight</li>
-              <li>Select algorithm and click Start to run visualization</li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Algorithm Info</h3>
-            <div className="space-y-4">
+        <TabsContent value="info" className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full bg-gray-800">
+            <div className="space-y-6 p-1">
               <div>
-                <h4 className="text-md font-medium text-white">Minimum Spanning Tree</h4>
-                <p className="text-sm text-gray-300">
-                  MST algorithms find the subset of edges that connect all nodes with minimum total weight.
-                </p>
+                <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
+                <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                  <li>Click on the canvas to create a node</li>
+                  <li>Drag from one node to another to create an edge</li>
+                  <li>Double-click a node to set it as the start node</li>
+                  <li>Click an edge to select it and modify its weight</li>
+                  <li>Select algorithm and click Start to run visualization</li>
+                </ul>
               </div>
+              
               <div>
-                <h4 className="text-md font-medium text-white">Prim's Algorithm</h4>
-                <p className="text-sm text-gray-300">
-                  A greedy algorithm that starts from a vertex and grows the MST one edge at a time.
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Time Complexity: O(E log V)
-                </p>
-              </div>
-              <div>
-                <h4 className="text-md font-medium text-white">Kruskal's Algorithm</h4>
-                <p className="text-sm text-gray-300">
-                  Sorts all edges by weight and adds them to MST if they don't create a cycle.
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Time Complexity: O(E log E)
-                </p>
-              </div>
-              <div>
-                <h4 className="text-md font-medium text-white">Graph Traversal</h4>
-                <p className="text-sm text-gray-300">
-                  Algorithms for visiting all nodes in a graph.
-                </p>
-              </div>
-              <div>
-                <h4 className="text-md font-medium text-white">BFS</h4>
-                <p className="text-sm text-gray-300">
-                  Visits nodes level by level, starting from a source node.
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Time Complexity: O(V + E)
-                </p>
-              </div>
-              <div>
-                <h4 className="text-md font-medium text-white">DFS</h4>
-                <p className="text-sm text-gray-300">
-                  Explores as far as possible along a branch before backtracking.
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Time Complexity: O(V + E)
-                </p>
+                <h3 className="text-lg font-semibold text-white mb-2">Algorithm Info</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-md font-medium text-white">Minimum Spanning Tree</h4>
+                    <p className="text-sm text-gray-300">
+                      MST algorithms find the subset of edges that connect all nodes with minimum total weight.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-md font-medium text-white">Prim's Algorithm</h4>
+                    <p className="text-sm text-gray-300">
+                      A greedy algorithm that starts from a vertex and grows the MST one edge at a time.
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Time Complexity: O(E log V)
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-md font-medium text-white">Kruskal's Algorithm</h4>
+                    <p className="text-sm text-gray-300">
+                      Sorts all edges by weight and adds them to MST if they don't create a cycle.
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Time Complexity: O(E log E)
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-md font-medium text-white">Graph Traversal</h4>
+                    <p className="text-sm text-gray-300">
+                      Algorithms for visiting all nodes in a graph.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-md font-medium text-white">BFS</h4>
+                    <p className="text-sm text-gray-300">
+                      Visits nodes level by level, starting from a source node.
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Time Complexity: O(V + E)
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-md font-medium text-white">DFS</h4>
+                    <p className="text-sm text-gray-300">
+                      Explores as far as possible along a branch before backtracking.
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Time Complexity: O(V + E)
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </ScrollArea>
         </TabsContent>
       </Tabs>
     </div>

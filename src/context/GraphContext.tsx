@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { GraphData, NodeData, EdgeData, generateId, calculateNewNodePosition } from '../utils/graphUtils';
+import { GraphData, NodeData, EdgeData, generateId } from '../utils/graphUtils';
 import { AlgorithmStep } from '../utils/algorithms';
 
 // Available algorithms
@@ -24,7 +23,7 @@ interface GraphState {
 
 // Graph Action Types
 type GraphAction =
-  | { type: 'ADD_NODE'; x: number; y: number }
+  | { type: 'ADD_NODE'; x: number; y: number; label?: string }
   | { type: 'DELETE_NODE'; nodeId: string }
   | { type: 'SELECT_NODE'; nodeId: string | null }
   | { type: 'MOVE_NODE'; nodeId: string; x: number; y: number }
@@ -92,11 +91,26 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
   switch (action.type) {
     case 'ADD_NODE': {
       const id = generateId();
+      // Use the provided label or generate the next number based on highest existing label
+      let nodeLabel: string;
+      if (action.label) {
+        nodeLabel = action.label;
+      } else {
+        const highestLabel = Math.max(
+          0,
+          ...state.graph.nodes.map(node => {
+            const num = parseInt(node.label);
+            return isNaN(num) ? 0 : num;
+          })
+        );
+        nodeLabel = (highestLabel + 1).toString();
+      }
+      
       const newNode: NodeData = {
         id,
         x: action.x,
         y: action.y,
-        label: (state.graph.nodes.length + 1).toString(),
+        label: nodeLabel,
         status: 'default',
       };
       

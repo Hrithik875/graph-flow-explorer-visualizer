@@ -16,11 +16,11 @@ const Node: React.FC<NodeProps> = ({ node }) => {
   // Get color based on node status
   const getNodeColor = () => {
     switch (node.status) {
-      case 'selected': return 'bg-node-selected';
-      case 'visited': return 'bg-node-visited';
-      case 'current': return 'bg-node-current';
-      case 'start': return 'bg-node-start';
-      default: return 'bg-node-default';
+      case 'selected': return 'bg-blue-500';
+      case 'visited': return 'bg-green-500';
+      case 'current': return 'bg-yellow-400';
+      case 'start': return 'bg-purple-500';
+      default: return 'bg-gray-700';
     }
   };
   
@@ -73,24 +73,23 @@ const Node: React.FC<NodeProps> = ({ node }) => {
     
     const handleMouseUp = () => {
       if (isDragging) {
-        // Add to history when drag is complete
-        // We need to add full graph state after move is complete
-        const updatedNodeX = node.x;
-        const updatedNodeY = node.y;
+        setIsDragging(false);
         
-        // Manually create an ADD_NODE action to trigger history update
-        // This is a bit of a hack but ensures the move operation is recorded in history
-        dispatch({ 
-          type: 'ADD_NODE', 
-          x: updatedNodeX, 
-          y: updatedNodeY 
-        });
-        
-        // Then immediately select the node we just moved
-        dispatch({ type: 'SELECT_NODE', nodeId: node.id });
+        // Add to history after drag is complete (only if actually dragged)
+        if (node.id === state.selectedNodeId) {
+          // Create a new history snapshot
+          const currentGraph = {
+            nodes: [...state.graph.nodes],
+            edges: [...state.graph.edges]
+          };
+          
+          // Dispatch a noop action to trigger a history update
+          dispatch({ 
+            type: 'SELECT_NODE', 
+            nodeId: node.id 
+          });
+        }
       }
-      
-      setIsDragging(false);
     };
     
     if (isDragging) {
@@ -102,12 +101,12 @@ const Node: React.FC<NodeProps> = ({ node }) => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dispatch, dragOffset, node.id, node.x, node.y]);
+  }, [isDragging, dispatch, dragOffset, node.id, state.selectedNodeId, state.graph]);
   
   // Apply animation class for visited or current nodes
   const getAnimationClass = () => {
     if (node.status === 'visited' || node.status === 'current') {
-      return 'animate-pulse-fade';
+      return 'animate-pulse';
     }
     return '';
   };

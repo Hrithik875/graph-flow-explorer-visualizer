@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import Node from './Node';
@@ -30,7 +29,21 @@ const GraphBoard: React.FC = () => {
       
       // Only add a new node if we didn't click on an existing one
       if (!clickedOnNode && !sourceNodeId) {
-        dispatch({ type: 'ADD_NODE', x, y });
+        // Find the highest current node label and increment
+        const highestLabel = Math.max(
+          0,
+          ...state.graph.nodes.map(node => {
+            const num = parseInt(node.label);
+            return isNaN(num) ? 0 : num;
+          })
+        );
+        
+        dispatch({ 
+          type: 'ADD_NODE', 
+          x, 
+          y,
+          label: (highestLabel + 1).toString() 
+        });
       }
     }
   };

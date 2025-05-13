@@ -14,74 +14,76 @@ interface EdgeProps {
 const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY }) => {
   const { state, dispatch } = useGraphContext();
   
-  // Get color based on edge status
+  // Determine edge color based on status
   const getEdgeColor = () => {
     switch (edge.status) {
-      case 'selected': return 'stroke-edge-selected';
-      case 'mst': return 'stroke-edge-mst';
-      default: return 'stroke-edge-default';
+      case 'selected': return '#FFFFFF';
+      case 'mst': return '#4CAF50'; // Green for MST
+      default: return '#90A4AE'; // Default color
     }
   };
   
   // Handle edge click
-  const handleClick = (e: React.MouseEvent) => {
+  const handleEdgeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Only allow selection if we're not running
+    // Only allow selection if not running an algorithm
     if (!state.isRunning) {
       dispatch({ type: 'SELECT_EDGE', edgeId: edge.id });
     }
   };
   
-  // Calculate midpoint for showing weight
+  // Calculate the midpoint of the edge for weight label
   const midpoint = pointOnLine(sourceX, sourceY, targetX, targetY, 0.5);
+  
+  // Adjust position for the weight label
+  const weightPos = {
+    x: midpoint.x,
+    y: midpoint.y - 15, // Offset above the line
+  };
   
   // Determine if this edge is selected
   const isSelected = state.selectedEdgeId === edge.id;
   
-  // Determine animation class
-  const getAnimationClass = () => {
-    if (edge.status === 'mst') {
-      return 'animate-pulse-fade';
-    }
-    return '';
-  };
-  
-  // Calculate proper width based on status
-  const getStrokeWidth = () => {
-    if (edge.status === 'mst') return 4;
-    if (isSelected) return 3;
-    return 2;
-  };
-  
   return (
-    <g>
+    <>
       {/* Edge line */}
       <line
         x1={sourceX}
         y1={sourceY}
         x2={targetX}
         y2={targetY}
-        className={`${getEdgeColor()} ${getAnimationClass()}`}
-        strokeWidth={getStrokeWidth()}
-        onClick={handleClick}
+        stroke={getEdgeColor()}
+        strokeWidth={isSelected ? "4" : "2"}
+        onClick={handleEdgeClick}
         style={{ cursor: 'pointer' }}
       />
       
-      {/* Weight display - enhanced */}
-      <foreignObject
-        x={midpoint.x - 18}
-        y={midpoint.y - 18}
-        width={36}
-        height={36}
-        onClick={handleClick}
-        style={{ cursor: 'pointer' }}
-      >
-        <div className={`${edge.status === 'mst' ? 'bg-green-100 border-green-500' : 'bg-white border-gray-300'} bg-opacity-90 rounded-full w-full h-full flex items-center justify-center text-sm font-bold border-2 shadow-sm`}>
+      {/* Edge weight */}
+      <g onClick={handleEdgeClick}>
+        <rect 
+          x={weightPos.x - 12} 
+          y={weightPos.y - 12} 
+          width={24} 
+          height={20} 
+          rx={4} 
+          fill="#2D3748" 
+          strokeWidth={isSelected ? "2" : "1"} 
+          stroke={isSelected ? "#FFFFFF" : "rgba(255,255,255,0.5)"}
+        />
+        <text 
+          x={weightPos.x} 
+          y={weightPos.y} 
+          textAnchor="middle" 
+          dominantBaseline="middle" 
+          fill="white" 
+          fontSize="12"
+          fontWeight={isSelected ? "bold" : "normal"}
+        >
           {edge.weight}
-        </div>
-      </foreignObject>
-    </g>
+        </text>
+      </g>
+    </>
   );
 };
 
