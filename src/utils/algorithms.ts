@@ -3,7 +3,8 @@ import { GraphData, NodeData, EdgeData, createAdjacencyList, findEdge } from './
 
 // Helper type for algorithm step
 export interface AlgorithmStep {
-  type: 'visitNode' | 'processNode' | 'visitEdge' | 'addToMST' | 'skipEdge' | 'done';
+  type: 'visitNode' | 'processNode' | 'visitEdge' | 'addToMST' | 'skipEdge' | 'done' | 
+         'completeNode' | 'traverseEdge' | 'currentEdge';
   nodeId?: string;
   edgeId?: string;
   message: string;
@@ -237,59 +238,106 @@ export function* bfs(graph: GraphData, startNodeId: string): Generator<Algorithm
   const queue: string[] = [startNodeId];
   visited.add(startNodeId);
   
+  const startNodeLabel = graph.nodes.find(n => n.id === startNodeId)?.label || startNodeId;
+  
   yield { 
     type: 'visitNode', 
     nodeId: startNodeId, 
-    message: `Starting BFS from node ${startNodeId}`
+    message: `Starting BFS from node ${startNodeLabel}`,
+    pathStep: `Starting from node ${startNodeLabel}`
   };
+  
+  // Track parents for path reconstruction
+  const parent: Map<string, { nodeId: string, edgeId: string }> = new Map();
   
   while (queue.length > 0) {
     const currentNodeId = queue.shift()!;
+    const currentNodeLabel = graph.nodes.find(n => n.id === currentNodeId)?.label || currentNodeId;
     
     yield { 
       type: 'processNode', 
       nodeId: currentNodeId, 
-      message: `Processing node ${currentNodeId}`
+      message: `Processing node ${currentNodeLabel}`,
+      pathStep: `Visiting node ${currentNodeLabel}`
     };
     
+    let allNeighborsVisited = true;
     const neighbors = adjList.get(currentNodeId) || [];
     
     for (const { nodeId: neighborId } of neighbors) {
       const edge = findEdge(graph, currentNodeId, neighborId);
+      const neighborLabel = graph.nodes.find(n => n.id === neighborId)?.label || neighborId;
       
       if (edge) {
         yield { 
           type: 'visitEdge', 
           edgeId: edge.id, 
-          message: `Examining edge to neighbor ${neighborId}`
+          message: `Examining edge to neighbor ${neighborLabel}`,
+          pathStep: `Examining edge from ${currentNodeLabel} to ${neighborLabel}`
         };
       }
       
       if (!visited.has(neighborId)) {
+        allNeighborsVisited = false;
         visited.add(neighborId);
         queue.push(neighborId);
         
+        // Record parent for path reconstruction
         if (edge) {
+          parent.set(neighborId, { nodeId: currentNodeId, edgeId: edge.id });
+          
           yield { 
-            type: 'addToMST', 
+            type: 'traverseEdge', 
             edgeId: edge.id,
             nodeId: neighborId,
-            message: `Visiting neighbor ${neighborId}`
+            message: `Visiting neighbor ${neighborLabel}`,
+            pathStep: `Found unvisited node ${neighborLabel}`
           };
         }
       } else if (edge) {
         yield { 
           type: 'skipEdge', 
           edgeId: edge.id, 
-          message: `Neighbor ${neighborId} already visited`
+          message: `Neighbor ${neighborLabel} already visited`,
+          pathStep: `Skipping node ${neighborLabel} (already visited)`
         };
+      }
+    }
+    
+    // If all neighbors are visited, mark this node as complete
+    if (allNeighborsVisited) {
+      yield { 
+        type: 'completeNode', 
+        nodeId: currentNodeId, 
+        message: `Node ${currentNodeLabel} fully explored`,
+        pathStep: `Completed exploration of node ${currentNodeLabel}`
+      };
+    }
+  }
+  
+  // Display the full BFS traversal path
+  let pathOutput = "BFS Traversal Path:\n";
+  const visitedOrder = Array.from(visited);
+  
+  for (let i = 0; i < visitedOrder.length; i++) {
+    const nodeId = visitedOrder[i];
+    const nodeLabel = graph.nodes.find(n => n.id === nodeId)?.label || nodeId;
+    
+    if (i === 0) {
+      pathOutput += `${nodeLabel}`;
+    } else {
+      const parentInfo = parent.get(nodeId);
+      if (parentInfo) {
+        const parentLabel = graph.nodes.find(n => n.id === parentInfo.nodeId)?.label || parentInfo.nodeId;
+        pathOutput += ` → ${nodeLabel}`;
       }
     }
   }
   
   yield { 
     type: 'done', 
-    message: `BFS completed. Visited ${visited.size} nodes.`
+    message: `BFS completed. Visited ${visited.size} nodes.`,
+    pathStep: pathOutput
   };
 }
 
@@ -302,36 +350,59 @@ export function* dfs(graph: GraphData, startNodeId: string): Generator<Algorithm
   
   const adjList = createAdjacencyList(graph);
   const visited = new Set<string>();
+  const path: string[] = [];
+  const edgePath: string[] = [];
+  
+  const startNodeLabel = graph.nodes.find(n => n.id === startNodeId)?.label || startNodeId;
+  
+  yield { 
+    type: 'visitNode', 
+    nodeId: startNodeId, 
+    message: `Starting DFS from node ${startNodeLabel}`,
+    pathStep: `Starting from node ${startNodeLabel}`
+  };
   
   function* dfsVisit(nodeId: string): Generator<AlgorithmStep> {
     visited.add(nodeId);
+    path.push(nodeId);
+    
+    const nodeLabel = graph.nodes.find(n => n.id === nodeId)?.label || nodeId;
     
     yield { 
       type: 'visitNode', 
       nodeId: nodeId, 
-      message: `Visiting node ${nodeId}`
+      message: `Visiting node ${nodeLabel}`,
+      pathStep: `Visiting node ${nodeLabel}`
     };
     
     const neighbors = adjList.get(nodeId) || [];
+    let allNeighborsExplored = true;
     
     for (const { nodeId: neighborId } of neighbors) {
       const edge = findEdge(graph, nodeId, neighborId);
+      const neighborLabel = graph.nodes.find(n => n.id === neighborId)?.label || neighborId;
       
       if (edge) {
         yield { 
-          type: 'visitEdge', 
+          type: 'currentEdge', 
           edgeId: edge.id, 
-          message: `Examining edge to neighbor ${neighborId}`
+          message: `Examining edge to neighbor ${neighborLabel}`,
+          pathStep: `Examining edge from ${nodeLabel} to ${neighborLabel}`
         };
       }
       
       if (!visited.has(neighborId)) {
+        allNeighborsExplored = false;
+        
         if (edge) {
+          edgePath.push(edge.id);
+          
           yield { 
-            type: 'addToMST', 
+            type: 'traverseEdge', 
             edgeId: edge.id,
             nodeId: neighborId,
-            message: `Moving to neighbor ${neighborId}`
+            message: `Moving to neighbor ${neighborLabel}`,
+            pathStep: `Moving to unvisited node ${neighborLabel}`
           };
         }
         
@@ -340,22 +411,39 @@ export function* dfs(graph: GraphData, startNodeId: string): Generator<Algorithm
         yield { 
           type: 'skipEdge', 
           edgeId: edge.id, 
-          message: `Neighbor ${neighborId} already visited`
+          message: `Neighbor ${neighborLabel} already visited`,
+          pathStep: `Skipping node ${neighborLabel} (already visited)`
         };
       }
     }
     
     yield { 
-      type: 'processNode', 
+      type: 'completeNode', 
       nodeId: nodeId, 
-      message: `Finished processing node ${nodeId}`
+      message: `Finished processing node ${nodeLabel}`,
+      pathStep: `Completed exploration of node ${nodeLabel}`
     };
   }
   
   yield* dfsVisit(startNodeId);
   
+  // Display the full DFS traversal path
+  let pathOutput = "DFS Traversal Path:\n";
+  
+  for (let i = 0; i < path.length; i++) {
+    const nodeId = path[i];
+    const nodeLabel = graph.nodes.find(n => n.id === nodeId)?.label || nodeId;
+    
+    if (i === 0) {
+      pathOutput += `${nodeLabel}`;
+    } else {
+      pathOutput += ` → ${nodeLabel}`;
+    }
+  }
+  
   yield { 
     type: 'done', 
-    message: `DFS completed. Visited ${visited.size} nodes.`
+    message: `DFS completed. Visited ${visited.size} nodes.`,
+    pathStep: pathOutput
   };
 }

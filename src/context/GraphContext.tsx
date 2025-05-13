@@ -70,6 +70,19 @@ const addToHistory = (state: GraphState): GraphState => {
   };
 };
 
+// Find highest numeric label
+const getNextNodeLabel = (nodes: NodeData[]): string => {
+  const numericLabels = nodes
+    .map(node => parseInt(node.label))
+    .filter(label => !isNaN(label));
+  
+  if (numericLabels.length === 0) {
+    return '1'; // Start with 1 if no numeric labels
+  }
+  
+  return (Math.max(...numericLabels) + 1).toString();
+};
+
 // Initial state
 const initialState: GraphState = {
   graph: { nodes: [], edges: [] },
@@ -91,20 +104,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
   switch (action.type) {
     case 'ADD_NODE': {
       const id = generateId();
-      // Use the provided label or generate the next number based on highest existing label
-      let nodeLabel: string;
-      if (action.label) {
-        nodeLabel = action.label;
-      } else {
-        const highestLabel = Math.max(
-          0,
-          ...state.graph.nodes.map(node => {
-            const num = parseInt(node.label);
-            return isNaN(num) ? 0 : num;
-          })
-        );
-        nodeLabel = (highestLabel + 1).toString();
-      }
+      // Use the provided label or get the next available number
+      const nodeLabel = action.label || getNextNodeLabel(state.graph.nodes);
       
       const newNode: NodeData = {
         id,
@@ -304,7 +305,9 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
             if (node.id === step.nodeId) {
               let status: NodeData['status'] = 'default';
               if (step.type === 'visitNode') status = 'current';
-              else if (step.type === 'processNode' || step.type === 'addToMST') status = 'visited';
+              else if (step.type === 'processNode') status = 'visited';
+              else if (step.type === 'completeNode') status = 'completed';
+              else if (step.type === 'addToMST') status = 'visited';
               return { ...node, status };
             }
             return node;
@@ -321,6 +324,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
               let status: EdgeData['status'] = 'default';
               if (step.type === 'visitEdge') status = 'selected';
               else if (step.type === 'addToMST') status = 'mst';
+              else if (step.type === 'traverseEdge') status = 'visited';
+              else if (step.type === 'currentEdge') status = 'current';
               return { ...edge, status };
             }
             return edge;

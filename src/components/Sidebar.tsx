@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -208,7 +209,7 @@ const Sidebar: React.FC = () => {
         </TabsList>
         
         {/* Algorithm Selection */}
-        <TabsContent value="algorithms" className="flex-1 overflow-hidden flex flex-col">
+        <TabsContent value="algorithms" className="flex-1 overflow-auto flex flex-col space-y-4">
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-white">Minimum Spanning Tree</h2>
             <div className="grid grid-cols-1 gap-2">
@@ -252,7 +253,7 @@ const Sidebar: React.FC = () => {
           </div>
           
           {/* Status and Controls */}
-          <div className="mt-8 space-y-4">
+          <div className="space-y-4 mt-4">
             <div className="bg-gray-700 p-3 rounded-md">
               <p className="text-white font-medium">
                 {getAlgorithmName()}
@@ -368,6 +369,8 @@ const Sidebar: React.FC = () => {
             <div className="space-y-1 text-xs text-gray-400">
               <p><span className="font-mono bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
               <p><span className="font-mono bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
+              <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
+              <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
             </div>
           </div>
         </TabsContent>
@@ -408,8 +411,8 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Info Tab */}
-        <TabsContent value="info" className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full bg-gray-800">
+        <TabsContent value="info" className="flex-1 overflow-hidden flex flex-col">
+          <ScrollArea className="flex-1 w-full bg-gray-800">
             <div className="space-y-6 p-1">
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
