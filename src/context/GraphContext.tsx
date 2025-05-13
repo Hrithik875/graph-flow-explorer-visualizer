@@ -307,7 +307,7 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
               if (step.type === 'visitNode') status = 'current';
               else if (step.type === 'processNode') status = 'visited';
               else if (step.type === 'completeNode') status = 'completed';
-              else if (step.type === 'addToMST') status = 'visited';
+              else if (step.type === 'addToMST') status = 'completed'; // Change from 'visited' to 'completed'
               return { ...node, status };
             }
             return node;

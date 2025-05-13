@@ -196,10 +196,9 @@ const Sidebar: React.FC = () => {
   };
   
   return (
-    <div className="w-80 h-full bg-gray-800 p-4 flex flex-col overflow-hidden">
+    <div className="w-80 min-h-full bg-gray-800 p-4 flex flex-col">
       <h1 className="text-2xl font-bold text-white mb-4">Algorithm Visualizer</h1>
       
-      {/* Tabs for different sections */}
       <Tabs defaultValue="algorithms" className="flex-1 flex flex-col">
         <TabsList className="grid grid-cols-4 mb-4">
           <TabsTrigger value="algorithms">Algorithms</TabsTrigger>
@@ -208,7 +207,7 @@ const Sidebar: React.FC = () => {
           <TabsTrigger value="info">Info</TabsTrigger>
         </TabsList>
         
-        {/* Algorithm Selection */}
+        {/* Algorithm Selection Tab */}
         <TabsContent value="algorithms" className="flex-1 overflow-auto flex flex-col space-y-4">
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-white">Minimum Spanning Tree</h2>
@@ -313,75 +312,77 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Controls Tab */}
-        <TabsContent value="controls" className="space-y-6 flex-1 overflow-auto">
-          {/* Speed Control */}
-          <div>
-            <Label htmlFor="speed-slider" className="text-white">
-              Animation Speed
-            </Label>
-            <div className="flex items-center mt-2">
-              <span className="text-xs text-gray-400">Slow</span>
-              <Slider
-                id="speed-slider"
-                defaultValue={[1000 - state.speed]}
-                max={950}
-                min={50}
-                step={50}
-                onValueChange={handleSpeedChange}
-                className="mx-2"
-              />
-              <span className="text-xs text-gray-400">Fast</span>
-            </div>
-          </div>
-          
-          {/* Edge Weight (when edge is selected) */}
-          {state.selectedEdgeId && (
+        <TabsContent value="controls" className="flex-1 overflow-y-auto">
+          <div className="space-y-6">
+            {/* Speed Control */}
             <div>
-              <Label htmlFor="edge-weight" className="text-white">
-                Edge Weight
+              <Label htmlFor="speed-slider" className="text-white">
+                Animation Speed
               </Label>
-              <Input
-                id="edge-weight"
-                type="number"
-                min="1"
-                value={state.graph.edges.find(e => e.id === state.selectedEdgeId)?.weight || 1}
-                onChange={handleEdgeWeightChange}
-                className="mt-1"
-              />
+              <div className="flex items-center mt-2">
+                <span className="text-xs text-gray-400">Slow</span>
+                <Slider
+                  id="speed-slider"
+                  defaultValue={[1000 - state.speed]}
+                  max={950}
+                  min={50}
+                  step={50}
+                  onValueChange={handleSpeedChange}
+                  className="mx-2"
+                />
+                <span className="text-xs text-gray-400">Fast</span>
+              </div>
             </div>
-          )}
-          
-          {/* Graph Controls */}
-          <div className="space-y-2">
-            <h3 className="text-sm text-gray-300">Graph Controls</h3>
-            <Button 
-              variant="destructive"
-              onClick={handleClearGraph}
-              className="w-full"
-            >
-              Clear Graph
-            </Button>
-          </div>
-          
-          {/* Keyboard Shortcuts */}
-          <div>
-            <h3 className="text-sm font-medium text-gray-300 mb-2">Keyboard Shortcuts</h3>
-            <div className="space-y-1 text-xs text-gray-400">
-              <p><span className="font-mono bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
-              <p><span className="font-mono bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
-              <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
-              <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
+            
+            {/* Edge Weight (when edge is selected) */}
+            {state.selectedEdgeId && (
+              <div>
+                <Label htmlFor="edge-weight" className="text-white">
+                  Edge Weight
+                </Label>
+                <Input
+                  id="edge-weight"
+                  type="number"
+                  min="1"
+                  value={state.graph.edges.find(e => e.id === state.selectedEdgeId)?.weight || 1}
+                  onChange={handleEdgeWeightChange}
+                  className="mt-1"
+                />
+              </div>
+            )}
+            
+            {/* Graph Controls */}
+            <div className="space-y-2">
+              <h3 className="text-sm text-gray-300">Graph Controls</h3>
+              <Button 
+                variant="destructive"
+                onClick={handleClearGraph}
+                className="w-full"
+              >
+                Clear Graph
+              </Button>
+            </div>
+            
+            {/* Keyboard Shortcuts */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-300 mb-2">Keyboard Shortcuts</h3>
+              <div className="space-y-1 text-xs text-gray-400">
+                <p><span className="font-mono bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
+                <p><span className="font-mono bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
+                <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
+                <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
+              </div>
             </div>
           </div>
         </TabsContent>
         
         {/* Path Tab */}
-        <TabsContent value="path" className="flex-1 overflow-hidden flex flex-col">
-          <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
+        <TabsContent value="path" className="flex-1">
+          <div className="space-y-4 h-full flex flex-col">
             <h2 className="text-lg font-semibold text-white">Algorithm Path</h2>
             
             {state.pathTaken.length > 0 ? (
-              <ScrollArea className="flex-1 border rounded-md border-gray-700 bg-gray-900 p-3">
+              <div className="flex-1 overflow-y-auto border rounded-md border-gray-700 bg-gray-900 p-3">
                 <ol className="space-y-2 text-sm text-gray-300 list-decimal list-inside">
                   {state.pathTaken.map((step, index) => (
                     <li key={index} className="py-1 border-b border-gray-800 last:border-0">
@@ -389,7 +390,7 @@ const Sidebar: React.FC = () => {
                     </li>
                   ))}
                 </ol>
-              </ScrollArea>
+              </div>
             ) : (
               <div className="flex justify-center items-center h-[200px] text-gray-500">
                 Run an algorithm to see the path steps
@@ -411,75 +412,73 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Info Tab */}
-        <TabsContent value="info" className="flex-1 overflow-hidden flex flex-col">
-          <ScrollArea className="flex-1 w-full bg-gray-800">
-            <div className="space-y-6 p-1">
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
-                <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
-                  <li>Click on the canvas to create a node</li>
-                  <li>Drag from one node to another to create an edge</li>
-                  <li>Double-click a node to set it as the start node</li>
-                  <li>Click an edge to select it and modify its weight</li>
-                  <li>Select algorithm and click Start to run visualization</li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">Algorithm Info</h3>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-md font-medium text-white">Minimum Spanning Tree</h4>
-                    <p className="text-sm text-gray-300">
-                      MST algorithms find the subset of edges that connect all nodes with minimum total weight.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-md font-medium text-white">Prim's Algorithm</h4>
-                    <p className="text-sm text-gray-300">
-                      A greedy algorithm that starts from a vertex and grows the MST one edge at a time.
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Time Complexity: O(E log V)
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-md font-medium text-white">Kruskal's Algorithm</h4>
-                    <p className="text-sm text-gray-300">
-                      Sorts all edges by weight and adds them to MST if they don't create a cycle.
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Time Complexity: O(E log E)
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-md font-medium text-white">Graph Traversal</h4>
-                    <p className="text-sm text-gray-300">
-                      Algorithms for visiting all nodes in a graph.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-md font-medium text-white">BFS</h4>
-                    <p className="text-sm text-gray-300">
-                      Visits nodes level by level, starting from a source node.
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Time Complexity: O(V + E)
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-md font-medium text-white">DFS</h4>
-                    <p className="text-sm text-gray-300">
-                      Explores as far as possible along a branch before backtracking.
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Time Complexity: O(V + E)
-                    </p>
-                  </div>
+        <TabsContent value="info" className="flex-1 overflow-y-auto">
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
+              <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                <li>Click on the canvas to create a node</li>
+                <li>Drag from one node to another to create an edge</li>
+                <li>Double-click a node to set it as the start node</li>
+                <li>Click an edge to select it and modify its weight</li>
+                <li>Select algorithm and click Start to run visualization</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-2">Algorithm Info</h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-md font-medium text-white">Minimum Spanning Tree</h4>
+                  <p className="text-sm text-gray-300">
+                    MST algorithms find the subset of edges that connect all nodes with minimum total weight.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-md font-medium text-white">Prim's Algorithm</h4>
+                  <p className="text-sm text-gray-300">
+                    A greedy algorithm that starts from a vertex and grows the MST one edge at a time.
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Time Complexity: O(E log V)
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-md font-medium text-white">Kruskal's Algorithm</h4>
+                  <p className="text-sm text-gray-300">
+                    Sorts all edges by weight and adds them to MST if they don't create a cycle.
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Time Complexity: O(E log E)
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-md font-medium text-white">Graph Traversal</h4>
+                  <p className="text-sm text-gray-300">
+                    Algorithms for visiting all nodes in a graph.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-md font-medium text-white">BFS</h4>
+                  <p className="text-sm text-gray-300">
+                    Visits nodes level by level, starting from a source node.
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Time Complexity: O(V + E)
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-md font-medium text-white">DFS</h4>
+                  <p className="text-sm text-gray-300">
+                    Explores as far as possible along a branch before backtracking.
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Time Complexity: O(V + E)
+                  </p>
                 </div>
               </div>
             </div>
-          </ScrollArea>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

@@ -38,10 +38,24 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
   // Calculate the midpoint of the edge for weight label
   const midpoint = pointOnLine(sourceX, sourceY, targetX, targetY, 0.5);
   
-  // Adjust position for the weight label - move further above the line to avoid overlap
+  // Calculate perpendicular offset to move the weight away from the edge line
+  // This ensures it's more visible and not covered by nodes
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+  const length = Math.sqrt(dx * dx + dy * dy);
+  
+  // Normalized perpendicular vector (rotated 90 degrees)
+  const perpX = -dy / length;
+  const perpY = dx / length;
+  
+  // Apply offset along perpendicular vector (30 pixels away from edge)
+  const offsetX = perpX * 30;
+  const offsetY = perpY * 30;
+  
+  // Final weight position
   const weightPos = {
-    x: midpoint.x,
-    y: midpoint.y - 20, // Increased offset above the line
+    x: midpoint.x + offsetX,
+    y: midpoint.y + offsetY,
   };
   
   // Determine if this edge is selected
