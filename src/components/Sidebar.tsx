@@ -196,11 +196,11 @@ const Sidebar: React.FC = () => {
   };
   
   return (
-    <div className="w-80 min-h-full bg-gray-800 p-4 flex flex-col">
-      <h1 className="text-2xl font-bold text-white mb-4">Algorithm Visualizer</h1>
+    <div className="w-80 h-full bg-gray-800 flex flex-col overflow-hidden">
+      <h1 className="text-2xl font-bold text-white px-4 py-4">Algorithm Visualizer</h1>
       
-      <Tabs defaultValue="algorithms" className="flex-1 flex flex-col">
-        <TabsList className="grid grid-cols-4 mb-4">
+      <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
+        <TabsList className="grid grid-cols-4 mx-4">
           <TabsTrigger value="algorithms">Algorithms</TabsTrigger>
           <TabsTrigger value="controls">Controls</TabsTrigger>
           <TabsTrigger value="path">Path</TabsTrigger>
@@ -208,7 +208,7 @@ const Sidebar: React.FC = () => {
         </TabsList>
         
         {/* Algorithm Selection Tab */}
-        <TabsContent value="algorithms" className="flex-1 overflow-auto flex flex-col space-y-4">
+        <TabsContent value="algorithms" className="flex-1 overflow-auto px-4 pt-4 pb-6">
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-white">Minimum Spanning Tree</h2>
             <div className="grid grid-cols-1 gap-2">
@@ -312,7 +312,7 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Controls Tab */}
-        <TabsContent value="controls" className="flex-1 overflow-y-auto">
+        <TabsContent value="controls" className="flex-1 overflow-auto px-4 pt-4 pb-6">
           <div className="space-y-6">
             {/* Speed Control */}
             <div>
@@ -377,29 +377,29 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Path Tab */}
-        <TabsContent value="path" className="flex-1">
-          <div className="space-y-4 h-full flex flex-col">
-            <h2 className="text-lg font-semibold text-white">Algorithm Path</h2>
+        <TabsContent value="path" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
+          <div className="flex flex-col h-full">
+            <h2 className="text-lg font-semibold text-white mb-2">Algorithm Path</h2>
             
-            {state.pathTaken.length > 0 ? (
-              <div className="flex-1 overflow-y-auto border rounded-md border-gray-700 bg-gray-900 p-3">
-                <ol className="space-y-2 text-sm text-gray-300 list-decimal list-inside">
+            <ScrollArea className="flex-1 border rounded-md border-gray-700 bg-gray-900">
+              {state.pathTaken.length > 0 ? (
+                <ol className="p-3 space-y-2 text-sm text-gray-300 list-decimal list-inside">
                   {state.pathTaken.map((step, index) => (
                     <li key={index} className="py-1 border-b border-gray-800 last:border-0">
                       {step}
                     </li>
                   ))}
                 </ol>
-              </div>
-            ) : (
-              <div className="flex justify-center items-center h-[200px] text-gray-500">
-                Run an algorithm to see the path steps
-              </div>
-            )}
+              ) : (
+                <div className="flex justify-center items-center h-[200px] text-gray-500 p-3">
+                  Run an algorithm to see the path steps
+                </div>
+              )}
+            </ScrollArea>
             
             {/* Total MST Cost Display */}
             {shouldShowTotalCost() && (
-              <div className="p-2 bg-gray-900 rounded-md border border-green-500">
+              <div className="mt-4 p-2 bg-gray-900 rounded-md border border-green-500">
                 <p className="text-sm text-white font-medium">
                   Minimum Spanning Tree Total Cost:
                 </p>
@@ -412,7 +412,7 @@ const Sidebar: React.FC = () => {
         </TabsContent>
         
         {/* Info Tab */}
-        <TabsContent value="info" className="flex-1 overflow-y-auto">
+        <TabsContent value="info" className="flex-1 overflow-auto px-4 pt-4 pb-6">
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>

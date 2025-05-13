@@ -19,6 +19,8 @@ interface GraphState {
   pathTaken: string[]; // Array to store the path steps
   history: GraphData[]; // History for undo operations
   historyIndex: number; // Current position in history
+  visitedNodes: Set<string>; // Track visited nodes for proper coloring
+  completedNodes: Set<string>; // Track completed nodes for proper coloring
 }
 
 // Graph Action Types
@@ -97,6 +99,8 @@ const initialState: GraphState = {
   pathTaken: [], // Initialize empty path
   history: [{ nodes: [], edges: [] }], // Initialize with empty graph
   historyIndex: 0,
+  visitedNodes: new Set<string>(), // Track visited nodes
+  completedNodes: new Set<string>(), // Track completed nodes
 };
 
 // Reducer function
@@ -261,6 +265,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         algorithm: action.algorithm,
         totalMSTCost: null, // Reset cost when changing algorithm
         pathTaken: [], // Reset path when changing algorithm
+        visitedNodes: new Set<string>(), // Reset visited nodes
+        completedNodes: new Set<string>(), // Reset completed nodes
       };
     }
     
@@ -280,6 +286,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
     
     case 'SET_CURRENT_STEP': {
       let newGraph = { ...state.graph };
+      let visitedNodes = new Set(state.visitedNodes);
+      let completedNodes = new Set(state.completedNodes);
       
       // Reset all statuses if step is null
       if (!action.step) {
@@ -291,6 +299,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           ...state,
           currentStep: null,
           graph: newGraph,
+          visitedNodes: new Set<string>(),
+          completedNodes: new Set<string>(),
         };
       }
       
@@ -298,16 +308,42 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
       const step = action.step;
       
       if (step.nodeId) {
+        // Add to visited nodes
+        if (step.type === 'visitNode' || step.type === 'processNode') {
+          visitedNodes.add(step.nodeId);
+        }
+        
+        // Add to completed nodes if node is fully processed
+        if (step.type === 'completeNode') {
+          completedNodes.add(step.nodeId);
+        }
+        
         // Update node status
         newGraph = {
           ...newGraph,
           nodes: newGraph.nodes.map(node => {
             if (node.id === step.nodeId) {
               let status: NodeData['status'] = 'default';
-              if (step.type === 'visitNode') status = 'current';
-              else if (step.type === 'processNode') status = 'visited';
-              else if (step.type === 'completeNode') status = 'completed';
-              else if (step.type === 'addToMST') status = 'completed'; // Change from 'visited' to 'completed'
+              
+              if (completedNodes.has(node.id)) {
+                status = 'completed'; // Node is fully explored
+              }
+              else if (step.type === 'visitNode') {
+                status = 'current'; // Currently visiting
+              }
+              else if (visitedNodes.has(node.id)) {
+                status = 'visited'; // Already visited but not completed
+              }
+              else if (step.type === 'addToMST') {
+                status = 'completed'; // Added to MST
+                completedNodes.add(node.id); // Add to completed
+              }
+              
+              // Always prioritize start node status
+              if (node.id === state.startNodeId) {
+                status = 'start';
+              }
+              
               return { ...node, status };
             }
             return node;
@@ -333,10 +369,29 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         };
       }
       
+      // Update all nodes based on visited and completed sets
+      newGraph = {
+        ...newGraph,
+        nodes: newGraph.nodes.map(node => {
+          if (node.id === state.startNodeId) {
+            return { ...node, status: 'start' };
+          } 
+          else if (completedNodes.has(node.id)) {
+            return { ...node, status: 'completed' };
+          }
+          else if (visitedNodes.has(node.id)) {
+            return { ...node, status: 'visited' };
+          }
+          return node;
+        })
+      };
+      
       return {
         ...state,
         currentStep: action.step,
         graph: newGraph,
+        visitedNodes,
+        completedNodes,
       };
     }
     
@@ -350,6 +405,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         currentStep: null,
         totalMSTCost: null, // Reset cost when resetting graph
         pathTaken: [], // Reset path when resetting graph
+        visitedNodes: new Set<string>(), // Reset visited nodes
+        completedNodes: new Set<string>(), // Reset completed nodes
       };
     }
     
@@ -376,6 +433,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           })),
           edges: state.graph.edges.map(edge => ({ ...edge, status: 'default' })),
         },
+        visitedNodes: new Set<string>(), // Reset visited nodes
+        completedNodes: new Set<string>(), // Reset completed nodes
       };
     }
     
