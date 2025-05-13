@@ -1,11 +1,10 @@
-
 // Graph data types
 export interface NodeData {
   id: string;
   x: number;
   y: number;
   label: string;
-  status: 'default' | 'selected' | 'visited' | 'current' | 'start';
+  status: 'default' | 'selected' | 'visited' | 'current' | 'start' | 'completed';
 }
 
 export interface EdgeData {
@@ -13,7 +12,7 @@ export interface EdgeData {
   from: string;
   to: string;
   weight: number;
-  status: 'default' | 'selected' | 'mst';
+  status: 'default' | 'selected' | 'mst' | 'visited' | 'current';
 }
 
 export interface GraphData {
