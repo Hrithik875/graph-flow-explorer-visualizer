@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { GraphData, NodeData, EdgeData, generateId } from '../utils/graphUtils';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -314,17 +313,13 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           visitedNodes.add(step.nodeId);
         }
         
-        // Add to completed nodes if node is fully processed
-        // This is the key fix - we need to ensure nodes are marked as completed
-        // when they are fully processed, not just for leaf nodes
+        // Mark nodes as completed
         if (step.type === 'completeNode' || step.type === 'addToMST') {
           completedNodes.add(step.nodeId);
         }
         
-        // For BFS and MST algorithms, also mark nodes as completed when they're done processing
+        // When algorithm is done, mark ALL visited nodes as completed for BFS, Prim's and Kruskal's
         if (step.type === 'done') {
-          // When algorithm is done, make sure all visited nodes are also marked as completed
-          // This ensures intermediate nodes in BFS, Prim's, and Kruskal's turn green at the end
           if (state.algorithm === 'bfs' || state.algorithm === 'prim' || state.algorithm === 'kruskal') {
             visitedNodes.forEach(nodeId => {
               completedNodes.add(nodeId);
@@ -367,22 +362,6 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
               return { ...edge, status };
             }
             return edge;
-          })
-        };
-      }
-      
-      // Additional check for BFS algorithm to mark nodes as completed
-      if (state.algorithm === 'bfs' && step.type === 'completeNode' && step.nodeId) {
-        completedNodes.add(step.nodeId);
-        
-        // Update the node status to completed
-        newGraph = {
-          ...newGraph,
-          nodes: newGraph.nodes.map(node => {
-            if (node.id === step.nodeId) {
-              return { ...node, status: 'completed' };
-            }
-            return node;
           })
         };
       }
