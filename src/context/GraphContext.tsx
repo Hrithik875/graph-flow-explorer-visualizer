@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { GraphData, NodeData, EdgeData, generateId } from '../utils/graphUtils';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -318,7 +319,8 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           completedNodes.add(step.nodeId);
         }
         
-        // When algorithm is done, mark ALL visited nodes as completed for BFS, Prim's and Kruskal's
+        // When algorithm is done, explicitly mark ALL visited nodes as completed
+        // This is crucial for BFS, Prim's and Kruskal's
         if (step.type === 'done') {
           if (state.algorithm === 'bfs' || state.algorithm === 'prim' || state.algorithm === 'kruskal') {
             visitedNodes.forEach(nodeId => {
@@ -328,22 +330,27 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         }
       }
       
-      // Update node status
+      // Update node status with a more explicit processing order
       newGraph = {
         ...newGraph,
         nodes: newGraph.nodes.map(node => {
+          // First, handle start node
           if (node.id === state.startNodeId) {
             return { ...node, status: 'start' };
           } 
+          // Next, handle completed nodes (high priority)
           else if (completedNodes.has(node.id)) {
             return { ...node, status: 'completed' };
           }
+          // Then, handle current processing node
           else if (visitedNodes.has(node.id) && step.nodeId === node.id && step.type === 'processNode') {
             return { ...node, status: 'current' };
           }
+          // Finally, handle visited but not completed nodes
           else if (visitedNodes.has(node.id)) {
             return { ...node, status: 'visited' };
           }
+          // Default case
           return { ...node, status: 'default' };
         })
       };
