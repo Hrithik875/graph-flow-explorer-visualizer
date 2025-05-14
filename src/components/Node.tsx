@@ -25,6 +25,25 @@ const Node: React.FC<NodeProps> = ({ node }) => {
     }
   };
   
+  // Check if the algorithm has completed
+  const isAlgorithmComplete = () => {
+    return state.currentStep?.type === 'done' && state.isRunning;
+  };
+  
+  // Get animation class with special consideration for completed algorithms
+  const getAnimationClass = () => {
+    // When algorithm is complete, don't animate visited nodes anymore
+    if (isAlgorithmComplete() && node.status === 'visited') {
+      return '';
+    }
+    
+    // Regular animation rules
+    if (node.status === 'visited' || node.status === 'current') {
+      return 'animate-pulse';
+    }
+    return '';
+  };
+  
   // Handle node click
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -103,14 +122,6 @@ const Node: React.FC<NodeProps> = ({ node }) => {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, dispatch, dragOffset, node.id, state.selectedNodeId, state.graph]);
-  
-  // Apply animation class for visited or current nodes
-  const getAnimationClass = () => {
-    if (node.status === 'visited' || node.status === 'current') {
-      return 'animate-pulse';
-    }
-    return '';
-  };
   
   // Determine if this node is selected
   const isSelected = state.selectedNodeId === node.id;
