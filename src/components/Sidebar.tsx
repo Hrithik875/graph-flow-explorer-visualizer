@@ -216,10 +216,10 @@ const Sidebar: React.FC = () => {
           >
             <Menu className="text-white" />
           </button>
-          <h1 className="text-2xl font-bold text-white m-0">Algorithm Visualizer</h1>
+          <h1 className="text-2x1 font-bold text-white m-0">Algorithm Visualizer</h1>
         </div>
         {/* Sidebar Content */}
-        <div className="w-82 h-[calc(100%-64px)] bg-gray-800 flex flex-col overflow-hidden relative">
+        <div className="w-96 h-[calc(100%-64px)] bg-gray-800 flex flex-col overflow-hidden relative">
           <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
             <TabsList className="grid grid-cols-5 mx-4 gap-2">
               <TabsTrigger

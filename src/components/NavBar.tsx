@@ -292,6 +292,29 @@ const NavBar: React.FC = () => {
                 placeholder="******"
               />
             </div>
+            <div className="flex items-center my-2">
+              <div className="flex-grow border-t border-gray-300" />
+              <span className="mx-2 text-gray-500 text-xs">or</span>
+              <div className="flex-grow border-t border-gray-300" />
+            </div>
+            <Button
+              variant="outline"
+              className="w-full mb-2 flex items-center gap-2"
+              onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}
+              disabled={loading}
+            >
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" className="h-5 w-5" />
+              Continue with Google
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full flex items-center gap-2"
+              onClick={() => supabase.auth.signInWithOAuth({ provider: 'github' })}
+              disabled={loading}
+            >
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" className="h-5 w-5" />
+              Continue with GitHub
+            </Button>
           </div>
           
           <DialogFooter className="flex-col gap-2 sm:flex-row">
