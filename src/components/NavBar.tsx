@@ -153,7 +153,7 @@ const NavBar: React.FC = () => {
         .insert({
           name: graphName,
           user_id: user.id,
-          data: state.graph,
+          data: JSON.parse(JSON.stringify(state.graph)), // Ensure plain JSON
         });
       
       if (error) throw error;
@@ -195,19 +195,32 @@ const NavBar: React.FC = () => {
   return (
     <>
       <div className="flex items-center justify-between bg-gray-900 px-4 py-2">
-        <h1 className="text-xl font-bold text-white">Graph Algorithm Visualizer</h1>
-        
-        <div className="flex gap-2">
+        {/* Left: Logo and Title */}
+        <div className="flex items-center gap-3">
+          <img
+            src="/logo.png" // or import and use {logo} if in src/assets
+            alt="Logo"
+            className="h-10 w-10 object-contain"
+            style={{ borderRadius: 8 }}
+          />
+          <h1 className="text-xl font-bold text-white whitespace-nowrap">
+            Graph Algorithm Visualizer
+          </h1>
+        </div>
+
+        {/* Center: Empty */}
+        <div className="flex-1" />
+
+        {/* Right: Auth buttons */}
+        <div className="flex items-center gap-2">
           {user ? (
-            <>
-              <Button variant="outline" onClick={handleSignOut} disabled={loading}>
-                {loading ? 'Processing...' : `Sign Out (${user.email})`}
-              </Button>
-            </>
+            <Button variant="outline" onClick={handleSignOut} disabled={loading}>
+              {loading ? 'Processing...' : `Sign Out (${user.email})`}
+            </Button>
           ) : (
             <>
-              <Button 
-                variant="greenOutline" 
+              <Button
+                variant="greenOutline"
                 onClick={() => {
                   setAuthMode('signup');
                   setAuthOpen(true);
@@ -218,7 +231,7 @@ const NavBar: React.FC = () => {
                 <UserPlus size={16} />
                 Sign Up
               </Button>
-              <Button 
+              <Button
                 variant="green"
                 onClick={() => {
                   setAuthMode('signin');

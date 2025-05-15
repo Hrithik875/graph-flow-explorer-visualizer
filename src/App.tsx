@@ -9,6 +9,7 @@ import RotateToLandscape from "./components/RotateToLandscape";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
+import AuthCallback from "./components/AuthCallback";
 import { GraphProvider } from "./context/GraphContext";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App: React.FC = () => {
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
