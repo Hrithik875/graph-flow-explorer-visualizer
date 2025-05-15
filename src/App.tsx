@@ -9,6 +9,7 @@ import RotateToLandscape from "./components/RotateToLandscape";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
+import { GraphProvider } from "./context/GraphContext";
 
 const queryClient = new QueryClient();
 
@@ -16,21 +17,23 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <RotateToLandscape />
-        <div className="flex flex-col h-screen">
-          <NavBar />
-          <div className="flex-1">
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+        <GraphProvider>
+          <Toaster />
+          <Sonner />
+          <RotateToLandscape />
+          <div className="flex flex-col h-screen">
+            <NavBar />
+            <div className="flex-1">
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </div>
           </div>
-        </div>
+        </GraphProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
