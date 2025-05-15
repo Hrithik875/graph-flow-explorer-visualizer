@@ -1,15 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { useGraphContext } from '../context/GraphContext';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
-// Initialize Supabase client with public keys
-const supabaseUrl = 'https://iwhaelvfxmqpowmepbvr.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3aGFlbHZmeG1xcG93bWVwYnZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU4ODM3NTUsImV4cCI6MjAzMTQ1OTc1NX0.moPKrKgThwInBtSaXu_xi86s7AN4RvyzBl64Ux0wa-g';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const SavedGraphs: React.FC = () => {
   const [savedGraphs, setSavedGraphs] = useState<any[]>([]);
@@ -22,26 +17,31 @@ const SavedGraphs: React.FC = () => {
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
-      setUser(data.session?.user || null);
+      const currentUser = data.session?.user || null;
+      setUser(currentUser);
       
-      if (data.session?.user) {
-        fetchSavedGraphs(data.session.user.id);
+      if (currentUser) {
+        fetchSavedGraphs(currentUser.id);
       } else {
         setLoading(false);
       }
       
       // Set up auth state change listener
-      supabase.auth.onAuthStateChange((_event, session) => {
-        const currentUser = session?.user || null;
-        setUser(currentUser);
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const newUser = session?.user || null;
+        setUser(newUser);
         
-        if (currentUser) {
-          fetchSavedGraphs(currentUser.id);
+        if (newUser) {
+          fetchSavedGraphs(newUser.id);
         } else {
           setSavedGraphs([]);
           setLoading(false);
         }
       });
+      
+      return () => {
+        subscription.unsubscribe();
+      };
     };
     
     getSession();
@@ -59,11 +59,13 @@ const SavedGraphs: React.FC = () => {
       
       if (error) throw error;
       
+      console.log("Fetched graphs:", data);
       setSavedGraphs(data || []);
     } catch (error: any) {
+      console.error("Error fetching graphs:", error);
       toast({
         title: "Error loading graphs",
-        description: error.message,
+        description: error.message || "Failed to load your saved graphs",
         variant: "destructive"
       });
     } finally {
@@ -89,6 +91,7 @@ const SavedGraphs: React.FC = () => {
         description: `Successfully loaded "${graph.name}"`
       });
     } catch (error: any) {
+      console.error("Error loading graph:", error);
       toast({
         title: "Error loading graph",
         description: "The graph data may be corrupted",
@@ -99,6 +102,7 @@ const SavedGraphs: React.FC = () => {
   
   const deleteGraph = async (id: string) => {
     try {
+      setLoading(true);
       const { error } = await supabase
         .from('graphs')
         .delete()
@@ -114,11 +118,14 @@ const SavedGraphs: React.FC = () => {
         description: "The graph has been deleted successfully"
       });
     } catch (error: any) {
+      console.error("Error deleting graph:", error);
       toast({
         title: "Error deleting graph",
-        description: error.message,
+        description: error.message || "Failed to delete the graph",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
   

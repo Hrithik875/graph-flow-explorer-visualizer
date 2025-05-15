@@ -1,19 +1,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { createClient } from '@supabase/supabase-js';
+import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { useGraphContext } from '../context/GraphContext';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, LogIn, UserPlus } from 'lucide-react';
-
-// Initialize Supabase client with public keys
-// These are public keys so it's safe to include them in the client
-const supabaseUrl = 'https://iwhaelvfxmqpowmepbvr.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3aGFlbHZmeG1xcG93bWVwYnZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU4ODM3NTUsImV4cCI6MjAzMTQ1OTc1NX0.moPKrKgThwInBtSaXu_xi86s7AN4RvyzBl64Ux0wa-g';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const NavBar: React.FC = () => {
   const [user, setUser] = React.useState<any>(null);
@@ -32,18 +26,27 @@ const NavBar: React.FC = () => {
   React.useEffect(() => {
     const getSession = async () => {
       try {
-        const { data } = await supabase.auth.getSession();
-        setUser(data.session?.user || null);
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error fetching session:", error);
+          throw error;
+        }
+        
         console.log("Session data:", data);
+        setUser(data.session?.user || null);
         setLoading(false);
         
         // Set up auth state change listener
-        supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
           console.log("Auth state changed:", _event, session);
           setUser(session?.user || null);
         });
+
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
-        console.error("Error fetching session:", error);
+        console.error("Error in auth setup:", error);
         setLoading(false);
       }
     };
@@ -53,11 +56,17 @@ const NavBar: React.FC = () => {
   
   const handleSignIn = async () => {
     try {
+      setLoading(true);
       console.log("Signing in with:", email, password);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+      
       console.log("Sign in response:", data, error);
       
       if (error) throw error;
+      
       setAuthOpen(false);
       toast({
         title: "Successfully signed in",
@@ -70,16 +79,24 @@ const NavBar: React.FC = () => {
         description: error.message || "Failed to sign in",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
   
   const handleSignUp = async () => {
     try {
+      setLoading(true);
       console.log("Signing up with:", email, password);
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password 
+      });
+      
       console.log("Sign up response:", data, error);
       
       if (error) throw error;
+      
       setAuthOpen(false);
       toast({
         title: "Account created",
@@ -92,12 +109,18 @@ const NavBar: React.FC = () => {
         description: error.message || "Failed to sign up",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
   
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      setLoading(true);
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+      
       toast({
         title: "Signed out",
         description: "You have been signed out successfully"
@@ -109,6 +132,8 @@ const NavBar: React.FC = () => {
         description: error.message || "Failed to sign out",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -123,6 +148,7 @@ const NavBar: React.FC = () => {
     }
     
     try {
+      setLoading(true);
       const { error } = await supabase
         .from('graphs')
         .insert({
@@ -147,6 +173,8 @@ const NavBar: React.FC = () => {
         description: error.message || "Failed to save graph",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -172,8 +200,8 @@ const NavBar: React.FC = () => {
       <div className="flex gap-2">
         {user ? (
           <>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out ({user.email})
+            <Button variant="outline" onClick={handleSignOut} disabled={loading}>
+              {loading ? 'Processing...' : `Sign Out (${user.email})`}
             </Button>
           </>
         ) : (
@@ -185,6 +213,7 @@ const NavBar: React.FC = () => {
                 setAuthOpen(true);
               }}
               className="flex items-center gap-1"
+              disabled={loading}
             >
               <UserPlus size={16} />
               Sign Up
@@ -196,6 +225,7 @@ const NavBar: React.FC = () => {
                 setAuthOpen(true);
               }}
               className="flex items-center gap-1"
+              disabled={loading}
             >
               <LogIn size={16} />
               Log In
@@ -245,14 +275,18 @@ const NavBar: React.FC = () => {
                 <Button variant="outline" onClick={() => setAuthMode('signup')}>
                   Need an account?
                 </Button>
-                <Button variant="green" onClick={handleSignIn}>Sign In</Button>
+                <Button variant="green" onClick={handleSignIn} disabled={loading}>
+                  {loading ? 'Processing...' : 'Sign In'}
+                </Button>
               </>
             ) : (
               <>
                 <Button variant="outline" onClick={() => setAuthMode('signin')}>
                   Already have an account?
                 </Button>
-                <Button variant="green" onClick={handleSignUp}>Sign Up</Button>
+                <Button variant="green" onClick={handleSignUp} disabled={loading}>
+                  {loading ? 'Processing...' : 'Sign Up'}
+                </Button>
               </>
             )}
           </DialogFooter>
@@ -282,7 +316,9 @@ const NavBar: React.FC = () => {
           </div>
           
           <DialogFooter>
-            <Button variant="green" onClick={saveGraph}>Save Graph</Button>
+            <Button variant="green" onClick={saveGraph} disabled={loading}>
+              {loading ? 'Saving...' : 'Save Graph'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -292,6 +328,7 @@ const NavBar: React.FC = () => {
         variant="green"
         onClick={handleSaveGraphClick}
         className="fixed bottom-6 right-6 rounded-full p-3 shadow-lg"
+        disabled={loading}
       >
         <Save className="mr-1" />
         Save Graph
