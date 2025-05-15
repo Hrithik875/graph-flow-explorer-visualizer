@@ -314,17 +314,14 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           visitedNodes.add(step.nodeId);
         }
         
-        // Add to completed nodes if node is fully processed
-        // This is the key fix - we need to ensure nodes are marked as completed
-        // when they are fully processed, not just for leaf nodes
+        // Mark nodes as completed
         if (step.type === 'completeNode' || step.type === 'addToMST') {
           completedNodes.add(step.nodeId);
         }
         
-        // For BFS and MST algorithms, also mark nodes as completed when they're done processing
+        // When algorithm is done, explicitly mark ALL visited nodes as completed
+        // This is crucial for BFS, Prim's and Kruskal's
         if (step.type === 'done') {
-          // When algorithm is done, make sure all visited nodes are also marked as completed
-          // This ensures intermediate nodes in BFS, Prim's, and Kruskal's turn green at the end
           if (state.algorithm === 'bfs' || state.algorithm === 'prim' || state.algorithm === 'kruskal') {
             visitedNodes.forEach(nodeId => {
               completedNodes.add(nodeId);
@@ -333,22 +330,27 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         }
       }
       
-      // Update node status
+      // Update node status with a more explicit processing order
       newGraph = {
         ...newGraph,
         nodes: newGraph.nodes.map(node => {
+          // First, handle start node
           if (node.id === state.startNodeId) {
             return { ...node, status: 'start' };
           } 
+          // Next, handle completed nodes (high priority)
           else if (completedNodes.has(node.id)) {
             return { ...node, status: 'completed' };
           }
+          // Then, handle current processing node
           else if (visitedNodes.has(node.id) && step.nodeId === node.id && step.type === 'processNode') {
             return { ...node, status: 'current' };
           }
+          // Finally, handle visited but not completed nodes
           else if (visitedNodes.has(node.id)) {
             return { ...node, status: 'visited' };
           }
+          // Default case
           return { ...node, status: 'default' };
         })
       };
@@ -367,22 +369,6 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
               return { ...edge, status };
             }
             return edge;
-          })
-        };
-      }
-      
-      // Additional check for BFS algorithm to mark nodes as completed
-      if (state.algorithm === 'bfs' && step.type === 'completeNode' && step.nodeId) {
-        completedNodes.add(step.nodeId);
-        
-        // Update the node status to completed
-        newGraph = {
-          ...newGraph,
-          nodes: newGraph.nodes.map(node => {
-            if (node.id === step.nodeId) {
-              return { ...node, status: 'completed' };
-            }
-            return node;
           })
         };
       }
