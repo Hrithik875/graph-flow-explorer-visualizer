@@ -10,13 +10,15 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SavedGraphs from './SavedGraphs';
+import { Menu } from "lucide-react";
 
 const Sidebar: React.FC = () => {
   const { state, dispatch } = useGraphContext();
   const { toast } = useToast();
   const [generator, setGenerator] = useState<Generator<AlgorithmStep> | null>(null);
   const [isFinished, setIsFinished] = useState(false);
-  
+  const [open, setOpen] = useState(true);
+
   // Handle algorithm selection
   const handleAlgorithmSelect = (algorithm: typeof state.algorithm) => {
     // Reset the graph status when changing algorithms
@@ -196,328 +198,359 @@ const Sidebar: React.FC = () => {
   };
   
   return (
-    <div className="w-95 h-full bg-gray-800 flex flex-col overflow-hidden">
-      <h1 className="text-2xl font-bold text-white px-4 py-4">Algorithm Visualizer</h1>
-      
-      <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="grid grid-cols-5 mx-4 gap-2">
-          <TabsTrigger
-            value="algorithms"
-            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+    <>
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full z-40 transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+        style={{ width: 384 }} // w-96 = 384px
+      >
+        {/* Header: Menu Icon + Title */}
+        <div className="flex items-center gap-3 px-4 py-4 bg-gray-800">
+          <button
+            className="bg-gray-900 p-2 rounded-md hover:bg-gray-700 transition-colors"
+            onClick={() => setOpen((prev) => !prev)}
+            aria-label="Toggle sidebar"
+            type="button"
           >
-            Algorithms
-          </TabsTrigger>
-          <TabsTrigger
-            value="controls"
-            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
-          >
-            Controls
-          </TabsTrigger>
-          <TabsTrigger
-            value="path"
-            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
-          >
-            Path
-          </TabsTrigger>
-          <TabsTrigger
-            value="saved"
-            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
-          >
-            Saved
-          </TabsTrigger>
-          <TabsTrigger
-            value="info"
-            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
-          >
-            Info
-          </TabsTrigger>
-        </TabsList>
-        
-        {/* Algorithm Selection Tab */}
-        <TabsContent value="algorithms" className="flex-1 overflow-auto px-4 pt-4 pb-6">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-white">Minimum Spanning Tree</h2>
-            <div className="grid grid-cols-1 gap-2">
-              <Button 
-                variant={state.algorithm === 'prim' ? "default" : "outline"}
-                onClick={() => handleAlgorithmSelect('prim')}
-                disabled={state.isRunning}
-                className="justify-start"
+            <Menu className="text-white" />
+          </button>
+          <h1 className="text-2xl font-bold text-white m-0">Algorithm Visualizer</h1>
+        </div>
+        {/* Sidebar Content */}
+        <div className="w-82 h-[calc(100%-64px)] bg-gray-800 flex flex-col overflow-hidden relative">
+          <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
+            <TabsList className="grid grid-cols-5 mx-4 gap-2">
+              <TabsTrigger
+                value="algorithms"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
               >
-                Prim's Algorithm
-              </Button>
-              <Button 
-                variant={state.algorithm === 'kruskal' ? "default" : "outline"}
-                onClick={() => handleAlgorithmSelect('kruskal')}
-                disabled={state.isRunning}
-                className="justify-start"
+                Algorithms
+              </TabsTrigger>
+              <TabsTrigger
+                value="controls"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
               >
-                Kruskal's Algorithm
-              </Button>
-            </div>
-            
-            <h2 className="text-lg font-semibold text-white">Graph Traversal</h2>
-            <div className="grid grid-cols-1 gap-2">
-              <Button 
-                variant={state.algorithm === 'bfs' ? "default" : "outline"}
-                onClick={() => handleAlgorithmSelect('bfs')}
-                disabled={state.isRunning}
-                className="justify-start"
+                Controls
+              </TabsTrigger>
+              <TabsTrigger
+                value="path"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
               >
-                Breadth-First Search (BFS)
-              </Button>
-              <Button 
-                variant={state.algorithm === 'dfs' ? "default" : "outline"}
-                onClick={() => handleAlgorithmSelect('dfs')}
-                disabled={state.isRunning}
-                className="justify-start"
+                Path
+              </TabsTrigger>
+              <TabsTrigger
+                value="saved"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
               >
-                Depth-First Search (DFS)
-              </Button>
-            </div>
-          </div>
-          
-          {/* Status and Controls */}
-          <div className="space-y-4 mt-4">
-            <div className="bg-gray-700 p-3 rounded-md">
-              <p className="text-white font-medium">
-                {getAlgorithmName()}
-              </p>
-              {state.startNodeId && (
-                <p className="text-sm text-gray-300">
-                  Start Node: {state.graph.nodes.find(n => n.id === state.startNodeId)?.label}
-                </p>
-              )}
-              
-              {/* Total MST Cost Display */}
-              {shouldShowTotalCost() && (
-                <div className="mt-3 p-2 bg-gray-900 rounded-md border border-green-500">
-                  <p className="text-sm text-white font-medium">
-                    Minimum Spanning Tree Total Cost:
-                  </p>
-                  <p className="text-xl text-green-400 font-bold text-center">
-                    {state.totalMSTCost}
-                  </p>
-                </div>
-              )}
-              
-              {state.currentStep && (
-                <p className="text-sm text-gray-300 mt-2">
-                  {state.currentStep.message}
-                </p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Button 
-                onClick={handleStartAlgorithm}
-                disabled={state.isRunning || !state.algorithm}
-                className="w-full"
+                Saved
+              </TabsTrigger>
+              <TabsTrigger
+                value="info"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
               >
-                Start Algorithm
-              </Button>
-              
-              <div className="grid grid-cols-2 gap-2">
-                <Button 
-                  onClick={handleTogglePause}
-                  disabled={!state.algorithm || isFinished}
-                  variant="outline"
-                >
-                  {state.isRunning ? 'Pause' : 'Resume'}
-                </Button>
-                <Button 
-                  onClick={handleResetAlgorithm}
-                  disabled={!state.algorithm}
-                  variant="outline"
-                >
-                  Reset
-                </Button>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-        
-        {/* Controls Tab */}
-        <TabsContent value="controls" className="flex-1 overflow-auto px-4 pt-4 pb-6">
-          <div className="space-y-6">
-            {/* Speed Control */}
-            <div>
-              <Label htmlFor="speed-slider" className="text-white">
-                Animation Speed
-              </Label>
-              <div className="flex items-center mt-2">
-                <span className="text-xs text-gray-400">Slow</span>
-                <Slider
-                  id="speed-slider"
-                  defaultValue={[1000 - state.speed]}
-                  max={950}
-                  min={50}
-                  step={50}
-                  onValueChange={handleSpeedChange}
-                  className="mx-2"
-                />
-                <span className="text-xs text-gray-400">Fast</span>
-              </div>
-            </div>
+                Info
+              </TabsTrigger>
+            </TabsList>
             
-            {/* Edge Weight (when edge is selected) */}
-            {state.selectedEdgeId && (
-              <div>
-                <Label htmlFor="edge-weight" className="text-white">
-                  Edge Weight
-                </Label>
-                <Input
-                  id="edge-weight"
-                  type="number"
-                  min="1"
-                  value={state.graph.edges.find(e => e.id === state.selectedEdgeId)?.weight || 1}
-                  onChange={handleEdgeWeightChange}
-                  className="mt-1"
-                />
-              </div>
-            )}
-            
-            {/* Graph Controls */}
-            <div className="space-y-2">
-              <h3 className="text-sm text-gray-300">Graph Controls</h3>
-              <Button 
-                variant="destructive"
-                onClick={handleClearGraph}
-                className="w-full"
-              >
-                Clear Graph
-              </Button>
-            </div>
-            
-            {/* Keyboard Shortcuts */}
-            <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-2">Keyboard Shortcuts</h3>
-              <div className="space-y-1 text-xs text-gray-400">
-                <p><span className="font-mono bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
-                <p><span className="font-mono bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
-                <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
-                <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-        
-        {/* Path Tab */}
-        <TabsContent value="path" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
-          <div className="flex flex-col h-full">
-            <h2 className="text-lg font-semibold text-white mb-2">Algorithm Path</h2>
-            
-            <ScrollArea className="flex-1 border rounded-md border-gray-700 bg-gray-900">
-              {state.pathTaken.length > 0 ? (
-                <ol className="p-3 space-y-2 text-sm text-gray-300 list-decimal list-inside">
-                  {state.pathTaken.map((step, index) => (
-                    <li key={index} className="py-1 border-b border-gray-800 last:border-0">
-                      {step}
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <div className="flex justify-center items-center h-[200px] text-gray-500 p-3">
-                  Run an algorithm to see the path steps
-                </div>
-              )}
-            </ScrollArea>
-            
-            {/* Total MST Cost Display */}
-            {shouldShowTotalCost() && (
-              <div className="mt-4 p-2 bg-gray-900 rounded-md border border-green-500">
-                <p className="text-sm text-white font-medium">
-                  Minimum Spanning Tree Total Cost:
-                </p>
-                <p className="text-xl text-green-400 font-bold text-center">
-                  {state.totalMSTCost}
-                </p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-        
-        {/* Saved Graphs Tab */}
-        <TabsContent value="saved" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
-          <div className="flex flex-col h-full">
-            <h2 className="text-lg font-semibold text-white mb-2">Saved Graphs</h2>
-            <div className="flex-1 overflow-hidden border rounded-md border-gray-700 bg-gray-900">
-              <SavedGraphs />
-            </div>
-          </div>
-        </TabsContent>
-        
-        {/* Info Tab */}
-        <TabsContent value="info" className="flex-1 overflow-auto px-4 pt-4 pb-6">
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
-              <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
-                <li>Click on the canvas to create a node</li>
-                <li>Drag from one node to another to create an edge</li>
-                <li>Double-click a node to set it as the start node</li>
-                <li>Click an edge to select it and modify its weight</li>
-                <li>Select algorithm and click Start to run visualization</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Algorithm Info</h3>
+            {/* Algorithm Selection Tab */}
+            <TabsContent value="algorithms" className="flex-1 overflow-auto px-4 pt-4 pb-6">
               <div className="space-y-4">
-                <div>
-                  <h4 className="text-md font-medium text-white">Minimum Spanning Tree</h4>
-                  <p className="text-sm text-gray-300">
-                    MST algorithms find the subset of edges that connect all nodes with minimum total weight.
-                  </p>
+                <h2 className="text-lg font-semibold text-white">Minimum Spanning Tree</h2>
+                <div className="grid grid-cols-1 gap-2">
+                  <Button 
+                    variant={state.algorithm === 'prim' ? "default" : "outline"}
+                    onClick={() => handleAlgorithmSelect('prim')}
+                    disabled={state.isRunning}
+                    className="justify-start"
+                  >
+                    Prim's Algorithm
+                  </Button>
+                  <Button 
+                    variant={state.algorithm === 'kruskal' ? "default" : "outline"}
+                    onClick={() => handleAlgorithmSelect('kruskal')}
+                    disabled={state.isRunning}
+                    className="justify-start"
+                  >
+                    Kruskal's Algorithm
+                  </Button>
                 </div>
-                <div>
-                  <h4 className="text-md font-medium text-white">Prim's Algorithm</h4>
-                  <p className="text-sm text-gray-300">
-                    A greedy algorithm that starts from a vertex and grows the MST one edge at a time.
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Time Complexity: O(E log V)
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-md font-medium text-white">Kruskal's Algorithm</h4>
-                  <p className="text-sm text-gray-300">
-                    Sorts all edges by weight and adds them to MST if they don't create a cycle.
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Time Complexity: O(E log E)
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-md font-medium text-white">Graph Traversal</h4>
-                  <p className="text-sm text-gray-300">
-                    Algorithms for visiting all nodes in a graph.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-md font-medium text-white">BFS</h4>
-                  <p className="text-sm text-gray-300">
-                    Visits nodes level by level, starting from a source node.
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Time Complexity: O(V + E)
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-md font-medium text-white">DFS</h4>
-                  <p className="text-sm text-gray-300">
-                    Explores as far as possible along a branch before backtracking.
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Time Complexity: O(V + E)
-                  </p>
+                
+                <h2 className="text-lg font-semibold text-white">Graph Traversal</h2>
+                <div className="grid grid-cols-1 gap-2">
+                  <Button 
+                    variant={state.algorithm === 'bfs' ? "default" : "outline"}
+                    onClick={() => handleAlgorithmSelect('bfs')}
+                    disabled={state.isRunning}
+                    className="justify-start"
+                  >
+                    Breadth-First Search (BFS)
+                  </Button>
+                  <Button 
+                    variant={state.algorithm === 'dfs' ? "default" : "outline"}
+                    onClick={() => handleAlgorithmSelect('dfs')}
+                    disabled={state.isRunning}
+                    className="justify-start"
+                  >
+                    Depth-First Search (DFS)
+                  </Button>
                 </div>
               </div>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+              
+              {/* Status and Controls */}
+              <div className="space-y-4 mt-4">
+                <div className="bg-gray-700 p-3 rounded-md">
+                  <p className="text-white font-medium">
+                    {getAlgorithmName()}
+                  </p>
+                  {state.startNodeId && (
+                    <p className="text-sm text-gray-300">
+                      Start Node: {state.graph.nodes.find(n => n.id === state.startNodeId)?.label}
+                    </p>
+                  )}
+                  
+                  {/* Total MST Cost Display */}
+                  {shouldShowTotalCost() && (
+                    <div className="mt-3 p-2 bg-gray-900 rounded-md border border-green-500">
+                      <p className="text-sm text-white font-medium">
+                        Minimum Spanning Tree Total Cost:
+                      </p>
+                      <p className="text-xl text-green-400 font-bold text-center">
+                        {state.totalMSTCost}
+                      </p>
+                    </div>
+                  )}
+                  
+                  {state.currentStep && (
+                    <p className="text-sm text-gray-300 mt-2">
+                      {state.currentStep.message}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Button 
+                    onClick={handleStartAlgorithm}
+                    disabled={state.isRunning || !state.algorithm}
+                    className="w-full"
+                  >
+                    Start Algorithm
+                  </Button>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button 
+                      onClick={handleTogglePause}
+                      disabled={!state.algorithm || isFinished}
+                      variant="outline"
+                    >
+                      {state.isRunning ? 'Pause' : 'Resume'}
+                    </Button>
+                    <Button 
+                      onClick={handleResetAlgorithm}
+                      disabled={!state.algorithm}
+                      variant="outline"
+                    >
+                      Reset
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            {/* Controls Tab */}
+            <TabsContent value="controls" className="flex-1 overflow-auto px-4 pt-4 pb-6">
+              <div className="space-y-6">
+                {/* Speed Control */}
+                <div>
+                  <Label htmlFor="speed-slider" className="text-white">
+                    Animation Speed
+                  </Label>
+                  <div className="flex items-center mt-2">
+                    <span className="text-xs text-gray-400">Slow</span>
+                    <Slider
+                      id="speed-slider"
+                      defaultValue={[1000 - state.speed]}
+                      max={950}
+                      min={50}
+                      step={50}
+                      onValueChange={handleSpeedChange}
+                      className="mx-2"
+                    />
+                    <span className="text-xs text-gray-400">Fast</span>
+                  </div>
+                </div>
+                
+                {/* Edge Weight (when edge is selected) */}
+                {state.selectedEdgeId && (
+                  <div>
+                    <Label htmlFor="edge-weight" className="text-white">
+                      Edge Weight
+                    </Label>
+                    <Input
+                      id="edge-weight"
+                      type="number"
+                      min="1"
+                      value={state.graph.edges.find(e => e.id === state.selectedEdgeId)?.weight || 1}
+                      onChange={handleEdgeWeightChange}
+                      className="mt-1"
+                    />
+                  </div>
+                )}
+                
+                {/* Graph Controls */}
+                <div className="space-y-2">
+                  <h3 className="text-sm text-gray-300">Graph Controls</h3>
+                  <Button 
+                    variant="destructive"
+                    onClick={handleClearGraph}
+                    className="w-full"
+                  >
+                    Clear Graph
+                  </Button>
+                </div>
+                
+                {/* Keyboard Shortcuts */}
+                <div>
+                  <h3 className="text-sm font-medium text-gray-300 mb-2">Keyboard Shortcuts</h3>
+                  <div className="space-y-1 text-xs text-gray-400">
+                    <p><span className="font-mono bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
+                    <p><span className="font-mono bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
+                    <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
+                    <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            {/* Path Tab */}
+            <TabsContent value="path" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
+              <div className="flex flex-col h-full">
+                <h2 className="text-lg font-semibold text-white mb-2">Algorithm Path</h2>
+                
+                <ScrollArea className="flex-1 border rounded-md border-gray-700 bg-gray-900">
+                  {state.pathTaken.length > 0 ? (
+                    <ol className="p-3 space-y-2 text-sm text-gray-300 list-decimal list-inside">
+                      {state.pathTaken.map((step, index) => (
+                        <li key={index} className="py-1 border-b border-gray-800 last:border-0">
+                          {step}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <div className="flex justify-center items-center h-[200px] text-gray-500 p-3">
+                      Run an algorithm to see the path steps
+                    </div>
+                  )}
+                </ScrollArea>
+                
+                {/* Total MST Cost Display */}
+                {shouldShowTotalCost() && (
+                  <div className="mt-4 p-2 bg-gray-900 rounded-md border border-green-500">
+                    <p className="text-sm text-white font-medium">
+                      Minimum Spanning Tree Total Cost:
+                    </p>
+                    <p className="text-xl text-green-400 font-bold text-center">
+                      {state.totalMSTCost}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+            
+            {/* Saved Graphs Tab */}
+            <TabsContent value="saved" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
+              <div className="flex flex-col h-full">
+                <h2 className="text-lg font-semibold text-white mb-2">Saved Graphs</h2>
+                <div className="flex-1 overflow-hidden border rounded-md border-gray-700 bg-gray-900">
+                  <SavedGraphs />
+                </div>
+              </div>
+            </TabsContent>
+            
+            {/* Info Tab */}
+            <TabsContent value="info" className="flex-1 overflow-auto px-4 pt-4 pb-6">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
+                  <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                    <li>Click on the canvas to create a node</li>
+                    <li>Drag from one node to another to create an edge</li>
+                    <li>Double-click a node to set it as the start node</li>
+                    <li>Click an edge to select it and modify its weight</li>
+                    <li>Select algorithm and click Start to run visualization</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Algorithm Info</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-md font-medium text-white">Minimum Spanning Tree</h4>
+                      <p className="text-sm text-gray-300">
+                        MST algorithms find the subset of edges that connect all nodes with minimum total weight.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-md font-medium text-white">Prim's Algorithm</h4>
+                      <p className="text-sm text-gray-300">
+                        A greedy algorithm that starts from a vertex and grows the MST one edge at a time.
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Time Complexity: O(E log V)
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-md font-medium text-white">Kruskal's Algorithm</h4>
+                      <p className="text-sm text-gray-300">
+                        Sorts all edges by weight and adds them to MST if they don't create a cycle.
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Time Complexity: O(E log E)
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-md font-medium text-white">Graph Traversal</h4>
+                      <p className="text-sm text-gray-300">
+                        Algorithms for visiting all nodes in a graph.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-md font-medium text-white">BFS</h4>
+                      <p className="text-sm text-gray-300">
+                        Visits nodes level by level, starting from a source node.
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Time Complexity: O(V + E)
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-md font-medium text-white">DFS</h4>
+                      <p className="text-sm text-gray-300">
+                        Explores as far as possible along a branch before backtracking.
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Time Complexity: O(V + E)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+      {!open && (
+        <button
+          className="fixed top-20 left-8 z-50 bg-gray-900 p-2 rounded-md hover:bg-gray-700 transition-colors"
+          onClick={() => setOpen(true)}
+          aria-label="Open sidebar"
+          type="button"
+        >
+          <Menu className="text-white" />
+        </button>
+      )}
+    </>
   );
 };
 
