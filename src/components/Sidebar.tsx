@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -10,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import SavedGraphs from './SavedGraphs';
 
 const Sidebar: React.FC = () => {
   const { state, dispatch } = useGraphContext();
@@ -200,10 +200,11 @@ const Sidebar: React.FC = () => {
       <h1 className="text-2xl font-bold text-white px-4 py-4">Algorithm Visualizer</h1>
       
       <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="grid grid-cols-4 mx-4">
+        <TabsList className="grid grid-cols-5 mx-4">
           <TabsTrigger value="algorithms">Algorithms</TabsTrigger>
           <TabsTrigger value="controls">Controls</TabsTrigger>
           <TabsTrigger value="path">Path</TabsTrigger>
+          <TabsTrigger value="saved">Saved</TabsTrigger>
           <TabsTrigger value="info">Info</TabsTrigger>
         </TabsList>
         
@@ -408,6 +409,16 @@ const Sidebar: React.FC = () => {
                 </p>
               </div>
             )}
+          </div>
+        </TabsContent>
+        
+        {/* Saved Graphs Tab */}
+        <TabsContent value="saved" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
+          <div className="flex flex-col h-full">
+            <h2 className="text-lg font-semibold text-white mb-2">Saved Graphs</h2>
+            <div className="flex-1 overflow-hidden border rounded-md border-gray-700 bg-gray-900">
+              <SavedGraphs />
+            </div>
           </div>
         </TabsContent>
         

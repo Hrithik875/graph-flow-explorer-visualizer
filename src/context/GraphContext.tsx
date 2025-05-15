@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { GraphData, NodeData, EdgeData, generateId } from '../utils/graphUtils';
 import { AlgorithmStep } from '../utils/algorithms';
@@ -45,7 +44,8 @@ type GraphAction =
   | { type: 'ADD_PATH_STEP'; step: string }
   | { type: 'CLEAR_PATH' }
   | { type: 'UNDO' }
-  | { type: 'REDO' };
+  | { type: 'REDO' }
+  | { type: 'LOAD_SAVED_GRAPH'; graph: GraphData }; // New action
 
 // Create the context
 interface GraphContextType {
@@ -484,6 +484,26 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
       
       // If we can't redo, return the current state
       return state;
+    }
+    
+    case 'LOAD_SAVED_GRAPH': {
+      // Create a new state with loaded graph
+      const newState = {
+        ...state,
+        graph: action.graph,
+        selectedNodeId: null,
+        selectedEdgeId: null,
+        algorithm: null,
+        isRunning: false,
+        currentStep: null,
+        totalMSTCost: null,
+        pathTaken: [],
+        visitedNodes: new Set<string>(),
+        completedNodes: new Set<string>(),
+      };
+      
+      // Add this to history too
+      return addToHistory(newState);
     }
     
     default:
