@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -194,46 +193,59 @@ const NavBar: React.FC = () => {
   };
   
   return (
-    <div className="flex items-center justify-between bg-gray-900 px-4 py-2">
-      <h1 className="text-xl font-bold text-white">Graph Algorithm Visualizer</h1>
-      
-      <div className="flex gap-2">
-        {user ? (
-          <>
-            <Button variant="outline" onClick={handleSignOut} disabled={loading}>
-              {loading ? 'Processing...' : `Sign Out (${user.email})`}
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button 
-              variant="greenOutline" 
-              onClick={() => {
-                setAuthMode('signup');
-                setAuthOpen(true);
-              }}
-              className="flex items-center gap-1"
-              disabled={loading}
-            >
-              <UserPlus size={16} />
-              Sign Up
-            </Button>
-            <Button 
-              variant="green"
-              onClick={() => {
-                setAuthMode('signin');
-                setAuthOpen(true);
-              }}
-              className="flex items-center gap-1"
-              disabled={loading}
-            >
-              <LogIn size={16} />
-              Log In
-            </Button>
-          </>
-        )}
+    <>
+      <div className="flex items-center justify-between bg-gray-900 px-4 py-2">
+        <h1 className="text-xl font-bold text-white">Graph Algorithm Visualizer</h1>
+        
+        <div className="flex gap-2">
+          {user ? (
+            <>
+              <Button variant="outline" onClick={handleSignOut} disabled={loading}>
+                {loading ? 'Processing...' : `Sign Out (${user.email})`}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                variant="greenOutline" 
+                onClick={() => {
+                  setAuthMode('signup');
+                  setAuthOpen(true);
+                }}
+                className="flex items-center gap-1"
+                disabled={loading}
+              >
+                <UserPlus size={16} />
+                Sign Up
+              </Button>
+              <Button 
+                variant="green"
+                onClick={() => {
+                  setAuthMode('signin');
+                  setAuthOpen(true);
+                }}
+                className="flex items-center gap-1"
+                disabled={loading}
+              >
+                <LogIn size={16} />
+                Log In
+              </Button>
+            </>
+          )}
+        </div>
       </div>
-      
+
+      {/* Save Graph floating button */}
+      <Button
+        variant="green"
+        onClick={handleSaveGraphClick}
+        className="fixed bottom-6 right-6 rounded-full p-3 shadow-lg z-50"
+        disabled={loading}
+      >
+        <Save className="mr-1" />
+        Save Graph
+      </Button>
+
       {/* Authentication Dialog */}
       <Dialog open={authOpen} onOpenChange={setAuthOpen}>
         <DialogContent>
@@ -322,18 +334,7 @@ const NavBar: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
-      {/* Save Graph floating button */}
-      <Button
-        variant="green"
-        onClick={handleSaveGraphClick}
-        className="fixed bottom-6 right-6 rounded-full p-3 shadow-lg"
-        disabled={loading}
-      >
-        <Save className="mr-1" />
-        Save Graph
-      </Button>
-    </div>
+    </>
   );
 };
 
