@@ -196,16 +196,41 @@ const Sidebar: React.FC = () => {
   };
   
   return (
-    <div className="w-80 h-full bg-gray-800 flex flex-col overflow-hidden">
+    <div className="w-95 h-full bg-gray-800 flex flex-col overflow-hidden">
       <h1 className="text-2xl font-bold text-white px-4 py-4">Algorithm Visualizer</h1>
       
       <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="grid grid-cols-5 mx-4">
-          <TabsTrigger value="algorithms">Algorithms</TabsTrigger>
-          <TabsTrigger value="controls">Controls</TabsTrigger>
-          <TabsTrigger value="path">Path</TabsTrigger>
-          <TabsTrigger value="saved">Saved</TabsTrigger>
-          <TabsTrigger value="info">Info</TabsTrigger>
+        <TabsList className="grid grid-cols-5 mx-4 gap-2">
+          <TabsTrigger
+            value="algorithms"
+            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+          >
+            Algorithms
+          </TabsTrigger>
+          <TabsTrigger
+            value="controls"
+            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+          >
+            Controls
+          </TabsTrigger>
+          <TabsTrigger
+            value="path"
+            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+          >
+            Path
+          </TabsTrigger>
+          <TabsTrigger
+            value="saved"
+            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+          >
+            Saved
+          </TabsTrigger>
+          <TabsTrigger
+            value="info"
+            className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+          >
+            Info
+          </TabsTrigger>
         </TabsList>
         
         {/* Algorithm Selection Tab */}
