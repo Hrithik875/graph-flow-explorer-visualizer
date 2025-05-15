@@ -7,6 +7,21 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, LogIn, UserPlus } from 'lucide-react';
+import { motion } from "framer-motion";
+
+const sidebarVariants = {
+  hidden: { x: -100, opacity: 0 },
+  visible: { x: 0, opacity: 1, transition: { type: "spring", stiffness: 60, damping: 15 } }
+};
+
+const buttonVariants = {
+  hidden: { y: 40, opacity: 0 },
+  visible: (i: number) => ({
+    y: 0,
+    opacity: 1,
+    transition: { delay: 0.2 + i * 0.08, type: "spring", stiffness: 80 }
+  })
+};
 
 const NavBar: React.FC = () => {
   const [user, setUser] = React.useState<any>(null);
@@ -191,14 +206,56 @@ const NavBar: React.FC = () => {
       });
     }
   };
-  
+
+  // Array of auth buttons for animation
+  const authButtons = user
+    ? [
+        <Button key="signout" variant="outline" onClick={handleSignOut} disabled={loading}>
+          {loading ? 'Processing...' : `Sign Out (${user.email})`}
+        </Button>
+      ]
+    : [
+        <Button
+          key="signup"
+          variant="greenOutline"
+          onClick={() => {
+            setAuthMode('signup');
+            setAuthOpen(true);
+          }}
+          className="flex items-center gap-1"
+          disabled={loading}
+        >
+          <UserPlus size={16} />
+          Sign Up
+        </Button>,
+        <Button
+          key="signin"
+          variant="green"
+          onClick={() => {
+            setAuthMode('signin');
+            setAuthOpen(true);
+          }}
+          className="flex items-center gap-1"
+          disabled={loading}
+        >
+          <LogIn size={16} />
+          Log In
+        </Button>
+      ];
+
   return (
     <>
-      <div className="flex items-center justify-between bg-gray-900 px-4 py-2">
+      {/* Animated NavBar */}
+      <motion.div
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 80, delay: 0.1 }}
+        className="flex items-center justify-between bg-gray-900 px-4 py-2"
+      >
         {/* Left: Logo and Title */}
         <div className="flex items-center gap-3">
           <img
-            src="/logo.png" // or import and use {logo} if in src/assets
+            src="/logo.png"
             alt="Logo"
             className="h-10 w-10 object-contain"
             style={{ borderRadius: 8 }}
@@ -207,57 +264,40 @@ const NavBar: React.FC = () => {
             Graph Algorithm Visualizer
           </h1>
         </div>
-
-        {/* Center: Empty */}
         <div className="flex-1" />
-
-        {/* Right: Auth buttons */}
+        {/* Right: Animated Auth buttons */}
         <div className="flex items-center gap-2">
-          {user ? (
-            <Button variant="outline" onClick={handleSignOut} disabled={loading}>
-              {loading ? 'Processing...' : `Sign Out (${user.email})`}
-            </Button>
-          ) : (
-            <>
-              <Button
-                variant="greenOutline"
-                onClick={() => {
-                  setAuthMode('signup');
-                  setAuthOpen(true);
-                }}
-                className="flex items-center gap-1"
-                disabled={loading}
-              >
-                <UserPlus size={16} />
-                Sign Up
-              </Button>
-              <Button
-                variant="green"
-                onClick={() => {
-                  setAuthMode('signin');
-                  setAuthOpen(true);
-                }}
-                className="flex items-center gap-1"
-                disabled={loading}
-              >
-                <LogIn size={16} />
-                Log In
-              </Button>
-            </>
-          )}
+          {authButtons.map((btn, i) => (
+            <motion.div
+              key={btn.key}
+              custom={i}
+              initial="hidden"
+              animate="visible"
+              variants={buttonVariants}
+            >
+              {btn}
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Save Graph floating button */}
-      <Button
-        variant="green"
-        onClick={handleSaveGraphClick}
-        className="fixed bottom-6 right-6 rounded-full p-3 shadow-lg z-50"
-        disabled={loading}
+      {/* Animated Save Graph floating button */}
+      <motion.div
+        initial={{ y: 60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 80, delay: 0.5 }}
+        className="fixed bottom-6 right-6 z-50"
       >
-        <Save className="mr-1" />
-        Save Graph
-      </Button>
+        <Button
+          variant="green"
+          onClick={handleSaveGraphClick}
+          className="rounded-full p-3 shadow-lg"
+          disabled={loading}
+        >
+          <Save className="mr-1" />
+          Save Graph
+        </Button>
+      </motion.div>
 
       {/* Authentication Dialog */}
       <Dialog open={authOpen} onOpenChange={setAuthOpen}>
