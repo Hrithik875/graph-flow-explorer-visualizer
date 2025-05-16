@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import { NodeData } from '../utils/graphUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface NodeProps {
   node: NodeData;
@@ -11,7 +12,9 @@ const Node: React.FC<NodeProps> = ({ node }) => {
   const { state, dispatch } = useGraphContext();
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [touchStartTime, setTouchStartTime] = useState<number | null>(null);
   const nodeRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   
   // Get color based on node status
   const getNodeColor = () => {
@@ -44,7 +47,7 @@ const Node: React.FC<NodeProps> = ({ node }) => {
     return '';
   };
   
-  // Handle node click
+  // Handle node click/tap
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
@@ -71,8 +74,87 @@ const Node: React.FC<NodeProps> = ({ node }) => {
     }
   };
   
+  // Handle touch start for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    
+    // Only allow interaction if we're not running an algorithm
+    if (state.isRunning) return;
+    
+    // Select the node
+    dispatch({ type: 'SELECT_NODE', nodeId: node.id });
+    
+    // Record touch start time for potential double tap
+    setTouchStartTime(Date.now());
+    
+    // Set up for potential drag
+    const touch = e.touches[0];
+    const boundingRect = nodeRef.current?.getBoundingClientRect();
+    
+    if (boundingRect) {
+      setIsDragging(true);
+      setDragOffset({
+        x: touch.clientX - node.x,
+        y: touch.clientY - node.y,
+      });
+    }
+  };
+  
+  // Handle touch move for dragging on mobile
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    
+    if (!isDragging || state.isRunning) return;
+    
+    const touch = e.touches[0];
+    const x = touch.clientX - dragOffset.x;
+    const y = touch.clientY - dragOffset.y;
+    
+    dispatch({ type: 'MOVE_NODE', nodeId: node.id, x, y });
+  };
+  
+  // Handle touch end for mobile
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    
+    // Check for double tap (within 300ms)
+    if (touchStartTime && Date.now() - touchStartTime < 300) {
+      const lastTap = nodeRef.current?.dataset.lastTap ? parseInt(nodeRef.current.dataset.lastTap) : 0;
+      const currentTime = Date.now();
+      
+      // If double tap detected (two taps within 300ms)
+      if (currentTime - lastTap < 300) {
+        handleDoubleClick(e);
+        // Reset to prevent triple tap detection
+        if (nodeRef.current) {
+          nodeRef.current.dataset.lastTap = '0';
+        }
+      } else {
+        // Store current tap time
+        if (nodeRef.current) {
+          nodeRef.current.dataset.lastTap = currentTime.toString();
+        }
+      }
+    }
+    
+    // End dragging
+    if (isDragging) {
+      setIsDragging(false);
+      
+      // Create a new history snapshot after drag is complete
+      if (node.id === state.selectedNodeId) {
+        dispatch({ 
+          type: 'SELECT_NODE', 
+          nodeId: node.id 
+        });
+      }
+    }
+    
+    setTouchStartTime(null);
+  };
+  
   // Handle double-click to set as start node
-  const handleDoubleClick = (e: React.MouseEvent) => {
+  const handleDoubleClick = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     
     // Only allow setting start node if we're not running
@@ -97,12 +179,6 @@ const Node: React.FC<NodeProps> = ({ node }) => {
         
         // Add to history after drag is complete (only if actually dragged)
         if (node.id === state.selectedNodeId) {
-          // Create a new history snapshot
-          const currentGraph = {
-            nodes: [...state.graph.nodes],
-            edges: [...state.graph.edges]
-          };
-          
           // Dispatch a noop action to trigger a history update
           dispatch({ 
             type: 'SELECT_NODE', 
@@ -129,15 +205,21 @@ const Node: React.FC<NodeProps> = ({ node }) => {
   // Determine if this node is the start node
   const isStart = state.startNodeId === node.id;
   
+  // Adjust node size for mobile
+  const nodeSize = isMobile ? 16 : 24;
+  const nodeDiameter = nodeSize * 2;
+  
   return (
     <div
       ref={nodeRef}
-      className={`absolute rounded-full w-12 h-12 flex items-center justify-center cursor-grab 
+      className={`absolute rounded-full flex items-center justify-center cursor-grab 
                  ${isSelected ? 'ring-4 ring-white' : ''}
                  ${getNodeColor()} ${getAnimationClass()}`}
       style={{
-        left: node.x - 24, // 24 is half the width
-        top: node.y - 24, // 24 is half the height
+        left: node.x - nodeSize,
+        top: node.y - nodeSize,
+        width: nodeDiameter,
+        height: nodeDiameter,
         zIndex: isDragging || isSelected ? 10 : 5,
         transform: isDragging ? 'scale(1.1)' : 'scale(1)',
         transition: isDragging ? 'none' : 'transform 0.2s ease',
@@ -145,8 +227,12 @@ const Node: React.FC<NodeProps> = ({ node }) => {
       onClick={handleClick}
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
-      <span className={`text-white font-bold ${isStart ? 'text-xl animate-pulse' : ''}`}>
+      <span className={`text-white font-bold ${isStart ? 'animate-pulse' : ''}`} 
+            style={{ fontSize: isMobile ? '0.75rem' : '1rem' }}>
         {node.label}
       </span>
     </div>

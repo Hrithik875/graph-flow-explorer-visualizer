@@ -2,6 +2,7 @@
 import React from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import { EdgeData, pointOnLine } from '../utils/graphUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface EdgeProps {
   edge: EdgeData;
@@ -13,6 +14,7 @@ interface EdgeProps {
 
 const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY }) => {
   const { state, dispatch } = useGraphContext();
+  const isMobile = useIsMobile();
   
   // Determine edge color based on status
   const getEdgeColor = () => {
@@ -25,8 +27,8 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
     }
   };
   
-  // Handle edge click
-  const handleEdgeClick = (e: React.MouseEvent) => {
+  // Handle edge click/tap
+  const handleEdgeClick = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     
     // Only allow selection if not running an algorithm
@@ -48,9 +50,10 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
   const perpX = -dy / length;
   const perpY = dx / length;
   
-  // Apply offset along perpendicular vector (30 pixels away from edge)
-  const offsetX = perpX * 30;
-  const offsetY = perpY * 30;
+  // Apply offset along perpendicular vector (adjust for mobile)
+  const offsetDistance = isMobile ? 20 : 30;
+  const offsetX = perpX * offsetDistance;
+  const offsetY = perpY * offsetDistance;
   
   // Final weight position
   const weightPos = {
@@ -61,6 +64,12 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
   // Determine if this edge is selected
   const isSelected = state.selectedEdgeId === edge.id;
   
+  // Adjust sizes for mobile
+  const fontSize = isMobile ? "10" : "12";
+  const rectWidth = isMobile ? 22 : 28;
+  const rectHeight = isMobile ? 18 : 22;
+  const strokeWidth = isSelected ? (isMobile ? "3" : "4") : (isMobile ? "1.5" : "2");
+  
   return (
     <>
       {/* Edge line */}
@@ -70,18 +79,19 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
         x2={targetX}
         y2={targetY}
         stroke={getEdgeColor()}
-        strokeWidth={isSelected ? "4" : "2"}
+        strokeWidth={strokeWidth}
         onClick={handleEdgeClick}
+        onTouchEnd={handleEdgeClick}
         style={{ cursor: 'pointer' }}
       />
       
       {/* Edge weight */}
-      <g onClick={handleEdgeClick}>
+      <g onClick={handleEdgeClick} onTouchEnd={handleEdgeClick}>
         <rect 
-          x={weightPos.x - 14} 
-          y={weightPos.y - 14} 
-          width={28} 
-          height={22} 
+          x={weightPos.x - (rectWidth/2)} 
+          y={weightPos.y - (rectHeight/2)} 
+          width={rectWidth} 
+          height={rectHeight} 
           rx={4} 
           fill="#2D3748" 
           strokeWidth={isSelected ? "2" : "1"} 
@@ -93,7 +103,7 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
           textAnchor="middle" 
           dominantBaseline="middle" 
           fill="white" 
-          fontSize="12"
+          fontSize={fontSize}
           fontWeight={isSelected ? "bold" : "normal"}
         >
           {edge.weight}
