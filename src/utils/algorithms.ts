@@ -4,7 +4,7 @@ import { GraphData, NodeData, EdgeData, createAdjacencyList, findEdge } from './
 // Helper type for algorithm step
 export interface AlgorithmStep {
   type: 'visitNode' | 'processNode' | 'visitEdge' | 'addToMST' | 'skipEdge' | 'done' | 
-         'completeNode' | 'traverseEdge' | 'currentEdge';
+         'completeNode' | 'traverseEdge' | 'currentEdge' | 'mst';
   nodeId?: string;
   edgeId?: string;
   message: string;
