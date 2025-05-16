@@ -14,11 +14,27 @@ const GraphBoard: React.FC = () => {
   const { state, dispatch } = useGraphContext();
   const { toast } = useToast();
   const boardRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const [tempLine, setTempLine] = useState<{ x1: number, y1: number, x2: number, y2: number } | null>(null);
   const [sourceNodeId, setSourceNodeId] = useState<string | null>(null);
   const [touchStartPos, setTouchStartPos] = useState<{ x: number, y: number } | null>(null);
   const [boardSize, setBoardSize] = useState({ width: 1000, height: 600 });
+  const [isDrawingEdge, setIsDrawingEdge] = useState(false);
   const isMobile = useIsMobile();
+  
+  // Function to disable scrolling on the ScrollArea
+  const disableScrolling = () => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.style.overflow = 'hidden';
+    }
+  };
+  
+  // Function to re-enable scrolling on the ScrollArea
+  const enableScrolling = () => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.style.overflow = '';
+    }
+  };
   
   // Update board size based on content
   useEffect(() => {
@@ -34,6 +50,19 @@ const GraphBoard: React.FC = () => {
       height: Math.max(prev.height, maxY, window.innerHeight - 200)
     }));
   }, [state.graph.nodes]);
+  
+  // Get a reference to the ScrollArea element
+  useEffect(() => {
+    // Find the scroll area element
+    const scrollElement = document.querySelector('[data-radix-scroll-area-viewport]') as HTMLDivElement;
+    if (scrollElement) {
+      scrollAreaRef.current = scrollElement;
+    }
+    
+    return () => {
+      enableScrolling(); // Make sure scrolling is re-enabled when component unmounts
+    };
+  }, []);
   
   // Handle adding a node on board click
   const handleBoardClick = (e: React.MouseEvent) => {
@@ -87,6 +116,8 @@ const GraphBoard: React.FC = () => {
         const sourceNode = state.graph.nodes.find(node => node.id === state.selectedNodeId);
         
         if (sourceNode) {
+          setIsDrawingEdge(true);
+          disableScrolling(); // Disable scrolling when starting to draw an edge
           setSourceNodeId(state.selectedNodeId);
           setTempLine({
             x1: sourceNode.x,
@@ -120,6 +151,12 @@ const GraphBoard: React.FC = () => {
   // Handle touch end for mobile
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!touchStartPos) return;
+    
+    // Re-enable scrolling
+    if (isDrawingEdge) {
+      enableScrolling();
+      setIsDrawingEdge(false);
+    }
     
     // Get touch position from the last known position
     const boardRect = boardRef.current?.getBoundingClientRect();
@@ -191,6 +228,8 @@ const GraphBoard: React.FC = () => {
     
     // Start drawing from the selected node
     setSourceNodeId(state.selectedNodeId);
+    setIsDrawingEdge(true);
+    disableScrolling(); // Disable scrolling when starting to draw an edge with mouse too
     
     // Find the selected node
     const sourceNode = state.graph.nodes.find(node => node.id === state.selectedNodeId);
@@ -219,6 +258,12 @@ const GraphBoard: React.FC = () => {
   
   // Handle mouse up for finishing edges
   const handleMouseUp = (e: React.MouseEvent) => {
+    // Re-enable scrolling
+    if (isDrawingEdge) {
+      enableScrolling();
+      setIsDrawingEdge(false);
+    }
+    
     if (sourceNodeId) {
       const boardRect = boardRef.current?.getBoundingClientRect();
       if (boardRect) {
@@ -374,7 +419,7 @@ const GraphBoard: React.FC = () => {
       {/* Controls bar */}
       <div className="flex justify-end gap-2 mb-2 p-2 bg-gray-800 rounded-lg">
         <Button 
-          variant="outline" 
+          variant="destructive" 
           size="icon" 
           onClick={handleDeleteNode}
           disabled={!state.selectedNodeId && !state.selectedEdgeId}
