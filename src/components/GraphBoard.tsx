@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import Node from './Node';
@@ -98,8 +97,8 @@ const GraphBoard: React.FC = () => {
           label: (highestLabel + 1).toString() 
         });
         
-        // Ensure scrolling is enabled after adding a node
-        enableScrolling();
+        // Explicitly ensure scrolling is enabled after adding a node
+        setTimeout(() => enableScrolling(), 50);
       }
     }
   };
@@ -223,8 +222,8 @@ const GraphBoard: React.FC = () => {
             label: (highestLabel + 1).toString() 
           });
           
-          // Ensure scrolling is enabled after adding a node
-          enableScrolling();
+          // Explicitly ensure scrolling is enabled after adding a node
+          setTimeout(() => enableScrolling(), 50);
         }
       }
     }
@@ -407,7 +406,7 @@ const GraphBoard: React.FC = () => {
     if (state.graph.nodes.length === 0) {
       if (isMobile) {
         return (
-          <div className="absolute inset-0 flex items-center justify-center text-white text-opacity-70">
+          <div className="absolute inset-0 flex items-center justify-center text-white text-opacity-70 pointer-events-none">
             <div className="text-center p-4">
               <p className="text-lg font-medium mb-2">Tap anywhere to add a node</p>
               <p className="text-sm mb-2">Select a node, then drag from it to another node to create an edge</p>
@@ -417,7 +416,7 @@ const GraphBoard: React.FC = () => {
         );
       } else {
         return (
-          <div className="absolute inset-0 flex items-center justify-center text-white text-opacity-70">
+          <div className="absolute inset-0 flex items-center justify-center text-white text-opacity-70 pointer-events-none">
             <div className="text-center">
               <p className="text-lg font-medium mb-2">Click anywhere to add a node</p>
               <p className="text-sm">Drag from one node to another to create an edge</p>
@@ -477,7 +476,7 @@ const GraphBoard: React.FC = () => {
           onTouchEnd={handleTouchEnd}
         >
           {/* SVG layer for edges */}
-          <svg className="absolute inset-0 w-full h-full">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none">
             {/* Render all edges */}
             {state.graph.edges.map(edge => {
               const sourceNode = state.graph.nodes.find(node => node.id === edge.from);
@@ -518,9 +517,7 @@ const GraphBoard: React.FC = () => {
           ))}
           
           {/* Instructions when board is empty - Centered in the board area */}
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            {renderHelpText()}
-          </div>
+          {renderHelpText()}
         </div>
       </ScrollArea>
     </div>

@@ -16,14 +16,14 @@ const Node: React.FC<NodeProps> = ({ node }) => {
   const nodeRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
-  // Get color based on node status - improved color mapping
+  // Get color based on node status - completely rewritten color mapping
   const getNodeColor = () => {
     switch (node.status) {
       case 'selected': return 'bg-blue-500';
-      case 'visited': return 'bg-yellow-400'; // Yellow for visited/active nodes
+      case 'visited': return 'bg-yellow-400'; // Yellow for visited nodes
       case 'current': return 'bg-yellow-500'; // Brighter yellow for current node
       case 'completed': return 'bg-green-500'; // Green for completed nodes
-      case 'start': return 'bg-purple-500'; // Purple for start node
+      case 'start': return 'bg-purple-500'; // Purple for start node (#9b87f5)
       default: return 'bg-gray-500'; // Gray for default
     }
   };

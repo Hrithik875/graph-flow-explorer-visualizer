@@ -13,7 +13,7 @@ const Index = () => {
       <div className={`${isMobile ? 'h-auto' : 'h-full'}`}>
         <Sidebar />
       </div>
-      <div className="flex-1 p-2 md:p-4 overflow-hidden">
+      <div className="flex-1 p-2 md:p-4 overflow-hidden flex flex-col">
         <GraphBoard />
       </div>
       <Toaster />

@@ -321,7 +321,7 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         }
       }
       
-      // Update node status with correct coloring logic - improved for all algorithms
+      // Update node status with correct coloring logic - completely rewritten
       newGraph = {
         ...newGraph,
         nodes: newGraph.nodes.map(node => {
@@ -329,12 +329,15 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
           if (node.id === state.startNodeId) {
             return { ...node, status: 'start' };
           } 
-          // Completed nodes get second priority - green color
+          // Completed nodes get second priority - green color 
           else if (completedNodes.has(node.id)) {
             return { ...node, status: 'completed' };
           }
           // Current processing node gets third priority - bright yellow
-          else if (step.type === 'processNode' && step.nodeId === node.id) {
+          else if (
+            (step.type === 'processNode' || step.type === 'addToMST') && 
+            step.nodeId === node.id
+          ) {
             return { ...node, status: 'current' };
           }
           // Regular visited nodes get fourth priority - yellow
@@ -348,23 +351,19 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         })
       };
       
-      // Handle edge updates with proper coloring based on edge status
+      // Handle edge updates
       if (step.edgeId) {
         newGraph = {
           ...newGraph,
           edges: newGraph.edges.map(edge => {
             if (edge.id === step.edgeId) {
-              let status: EdgeData['status'] = 'default';
-              
-              // Apply appropriate color based on edge status
               if (step.type === 'visitEdge' || step.type === 'currentEdge') {
-                status = 'current'; // Red for current/active edge
+                return { ...edge, status: 'current' };  // Red for current edge
               }
               else if (step.type === 'addToMST' || step.type === 'traverseEdge' || step.type === 'mst') {
-                status = 'visited'; // Green for traversed/MST edge
+                return { ...edge, status: 'visited' };  // Green for MST/traversed edge
               }
-              
-              return { ...edge, status };
+              return { ...edge, status: 'default' };
             }
             return edge;
           })
