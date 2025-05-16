@@ -308,6 +308,7 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
       // Handle step based on type
       const step = action.step;
       
+      // Track visited and completed nodes
       if (step.nodeId) {
         // Add to visited nodes
         if (step.type === 'visitNode' || step.type === 'processNode') {
@@ -318,54 +319,54 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         if (step.type === 'completeNode' || step.type === 'addToMST') {
           completedNodes.add(step.nodeId);
         }
-        
-        // When algorithm is done, explicitly mark ALL visited nodes as completed
-        // This is crucial for BFS, Prim's and Kruskal's
-        if (step.type === 'done') {
-          if (state.algorithm === 'bfs' || state.algorithm === 'prim' || state.algorithm === 'kruskal') {
-            visitedNodes.forEach(nodeId => {
-              completedNodes.add(nodeId);
-            });
-          }
-        }
       }
       
-      // Update node status with a more explicit processing order
+      // Update node status with correct coloring logic
       newGraph = {
         ...newGraph,
         nodes: newGraph.nodes.map(node => {
-          // First, handle start node
+          // Start node gets highest priority
           if (node.id === state.startNodeId) {
-            return { ...node, status: 'start' };
+            return { ...node, status: 'start' }; // Purple
           } 
-          // Next, handle completed nodes (high priority)
+          // Completed nodes get second priority
           else if (completedNodes.has(node.id)) {
-            return { ...node, status: 'completed' };
+            return { ...node, status: 'completed' }; // Green
           }
-          // Then, handle current processing node
-          else if (visitedNodes.has(node.id) && step.nodeId === node.id && step.type === 'processNode') {
-            return { ...node, status: 'current' };
+          // Current processing node gets third priority
+          else if (step.type === 'processNode' && step.nodeId === node.id) {
+            return { ...node, status: 'current' }; // Bright yellow
           }
-          // Finally, handle visited but not completed nodes
+          // Regular visited nodes get fourth priority
           else if (visitedNodes.has(node.id)) {
-            return { ...node, status: 'visited' };
+            return { ...node, status: 'visited' }; // Yellow
           }
-          // Default case
-          return { ...node, status: 'default' };
+          // Default nodes
+          else {
+            return { ...node, status: 'default' }; // Gray
+          }
         })
       };
       
-      // Handle edge updates
+      // Handle edge updates with correct coloring
       if (step.edgeId) {
         newGraph = {
           ...newGraph,
           edges: newGraph.edges.map(edge => {
             if (edge.id === step.edgeId) {
               let status: EdgeData['status'] = 'default';
-              if (step.type === 'visitEdge') status = 'selected';
-              else if (step.type === 'addToMST') status = 'mst';
-              else if (step.type === 'traverseEdge') status = 'visited';
-              else if (step.type === 'currentEdge') status = 'current';
+              
+              // Apply appropriate color based on edge status
+              if (step.type === 'visitEdge' || step.type === 'currentEdge') {
+                status = 'current'; // Red for active/current edge
+              }
+              else if (step.type === 'addToMST' || step.type === 'traverseEdge') {
+                status = 'visited'; // Green for traversed/visited edge
+              }
+              else if (step.type === 'mst') {
+                status = 'mst'; // Also green for MST edge
+              }
+              
               return { ...edge, status };
             }
             return edge;

@@ -59,6 +59,9 @@ const GraphBoard: React.FC = () => {
       scrollAreaRef.current = scrollElement;
     }
     
+    // Initially enable scrolling, only disable when drawing edges
+    enableScrolling();
+    
     return () => {
       enableScrolling(); // Make sure scrolling is re-enabled when component unmounts
     };

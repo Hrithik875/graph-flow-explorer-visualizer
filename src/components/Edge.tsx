@@ -19,10 +19,10 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
   // Determine edge color based on status
   const getEdgeColor = () => {
     switch (edge.status) {
-      case 'selected': return '#FFFFFF';
-      case 'mst': return '#4CAF50'; // Green for MST
+      case 'selected': return '#FFFFFF'; // White for selected edges
+      case 'mst': return '#4CAF50'; // Green for MST edges
       case 'visited': return '#4CAF50'; // Green for visited edges in traversal
-      case 'current': return '#ea384c'; // Red for current edges
+      case 'current': return '#ea384c'; // Red for current/active edges
       default: return '#8E9196'; // Default gray color
     }
   };

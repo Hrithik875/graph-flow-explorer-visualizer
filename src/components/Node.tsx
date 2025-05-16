@@ -20,10 +20,10 @@ const Node: React.FC<NodeProps> = ({ node }) => {
   const getNodeColor = () => {
     switch (node.status) {
       case 'selected': return 'bg-blue-500';
-      case 'visited': return 'bg-yellow-400'; // Yellow for visited nodes
-      case 'current': return 'bg-yellow-500'; // Brighter yellow for current
+      case 'visited': return 'bg-yellow-400'; // Yellow for visited/active nodes
+      case 'current': return 'bg-yellow-500'; // Brighter yellow for current node
       case 'completed': return 'bg-green-500'; // Green for completed nodes
-      case 'start': return 'bg-purple-500';
+      case 'start': return 'bg-purple-500'; // Purple for start node
       default: return 'bg-gray-500'; // Gray for default
     }
   };
