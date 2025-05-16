@@ -321,34 +321,34 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
         }
       }
       
-      // Update node status with correct coloring logic
+      // Update node status with correct coloring logic - improved for all algorithms
       newGraph = {
         ...newGraph,
         nodes: newGraph.nodes.map(node => {
-          // Start node gets highest priority
+          // Start node gets highest priority - purple color
           if (node.id === state.startNodeId) {
-            return { ...node, status: 'start' }; // Purple
+            return { ...node, status: 'start' };
           } 
-          // Completed nodes get second priority
+          // Completed nodes get second priority - green color
           else if (completedNodes.has(node.id)) {
-            return { ...node, status: 'completed' }; // Green
+            return { ...node, status: 'completed' };
           }
-          // Current processing node gets third priority
+          // Current processing node gets third priority - bright yellow
           else if (step.type === 'processNode' && step.nodeId === node.id) {
-            return { ...node, status: 'current' }; // Bright yellow
+            return { ...node, status: 'current' };
           }
-          // Regular visited nodes get fourth priority
+          // Regular visited nodes get fourth priority - yellow
           else if (visitedNodes.has(node.id)) {
-            return { ...node, status: 'visited' }; // Yellow
+            return { ...node, status: 'visited' };
           }
-          // Default nodes
+          // Default nodes - gray
           else {
-            return { ...node, status: 'default' }; // Gray
+            return { ...node, status: 'default' };
           }
         })
       };
       
-      // Handle edge updates with correct coloring
+      // Handle edge updates with proper coloring based on edge status
       if (step.edgeId) {
         newGraph = {
           ...newGraph,
@@ -358,13 +358,10 @@ function graphReducer(state: GraphState, action: GraphAction): GraphState {
               
               // Apply appropriate color based on edge status
               if (step.type === 'visitEdge' || step.type === 'currentEdge') {
-                status = 'current'; // Red for active/current edge
+                status = 'current'; // Red for current/active edge
               }
-              else if (step.type === 'addToMST' || step.type === 'traverseEdge') {
-                status = 'visited'; // Green for traversed/visited edge
-              }
-              else if (step.type === 'mst') {
-                status = 'mst'; // Also green for MST edge
+              else if (step.type === 'addToMST' || step.type === 'traverseEdge' || step.type === 'mst') {
+                status = 'visited'; // Green for traversed/MST edge
               }
               
               return { ...edge, status };

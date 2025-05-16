@@ -97,6 +97,9 @@ const GraphBoard: React.FC = () => {
           y,
           label: (highestLabel + 1).toString() 
         });
+        
+        // Ensure scrolling is enabled after adding a node
+        enableScrolling();
       }
     }
   };
@@ -159,6 +162,9 @@ const GraphBoard: React.FC = () => {
     if (isDrawingEdge) {
       enableScrolling();
       setIsDrawingEdge(false);
+    } else {
+      // Ensure scrolling is re-enabled if not drawing edges
+      enableScrolling();
     }
     
     // Get touch position from the last known position
@@ -216,6 +222,9 @@ const GraphBoard: React.FC = () => {
             y,
             label: (highestLabel + 1).toString() 
           });
+          
+          // Ensure scrolling is enabled after adding a node
+          enableScrolling();
         }
       }
     }
@@ -265,6 +274,9 @@ const GraphBoard: React.FC = () => {
     if (isDrawingEdge) {
       enableScrolling();
       setIsDrawingEdge(false);
+    } else {
+      // Ensure scrolling is re-enabled if not drawing edges
+      enableScrolling();
     }
     
     if (sourceNodeId) {
@@ -390,7 +402,7 @@ const GraphBoard: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [state.selectedNodeId, state.selectedEdgeId, state.isRunning, state.history, state.historyIndex, dispatch]);
   
-  // Render mobile help text if no nodes exist
+  // Render help text if no nodes exist
   const renderHelpText = () => {
     if (state.graph.nodes.length === 0) {
       if (isMobile) {
@@ -505,8 +517,10 @@ const GraphBoard: React.FC = () => {
             <Node key={node.id} node={node} />
           ))}
           
-          {/* Instructions when board is empty */}
-          {renderHelpText()}
+          {/* Instructions when board is empty - Centered in the board area */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            {renderHelpText()}
+          </div>
         </div>
       </ScrollArea>
     </div>

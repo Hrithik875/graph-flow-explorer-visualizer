@@ -16,7 +16,7 @@ const Node: React.FC<NodeProps> = ({ node }) => {
   const nodeRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
-  // Get color based on node status
+  // Get color based on node status - improved color mapping
   const getNodeColor = () => {
     switch (node.status) {
       case 'selected': return 'bg-blue-500';

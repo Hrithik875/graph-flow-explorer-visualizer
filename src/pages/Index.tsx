@@ -10,7 +10,7 @@ const Index = () => {
   
   return (
     <div className="flex flex-col md:flex-row h-screen w-full bg-gray-900 overflow-hidden">
-      <div className={`${isMobile ? 'h-auto' : ''} md:h-full`}>
+      <div className={`${isMobile ? 'h-auto' : 'h-full'}`}>
         <Sidebar />
       </div>
       <div className="flex-1 p-2 md:p-4 overflow-hidden">
