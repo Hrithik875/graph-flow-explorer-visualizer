@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import { NodeData } from '../utils/graphUtils';
@@ -239,8 +238,13 @@ const Node: React.FC<NodeProps> = ({ node }) => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <span className={`text-white font-bold ${isStart ? 'animate-pulse' : ''}`} 
-            style={{ fontSize: isMobile ? '0.75rem' : '1rem' }}>
+      <span
+        className={`text-white font-bold ${isStart ? 'animate-pulse' : ''}`}
+        style={{
+          fontSize: isMobile ? '0.75rem' : '1rem',
+          userSelect: 'none' // <-- Add this line
+        }}
+      >
         {node.label}
       </span>
     </div>

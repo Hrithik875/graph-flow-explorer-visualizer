@@ -105,6 +105,7 @@ const Edge: React.FC<EdgeProps> = ({ edge, sourceX, sourceY, targetX, targetY })
           fill="white" 
           fontSize={fontSize}
           fontWeight={isSelected ? "bold" : "normal"}
+          style={{ userSelect: "none" }}
         >
           {edge.weight}
         </text>

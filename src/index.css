@@ -98,4 +98,10 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  svg text {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
 }
