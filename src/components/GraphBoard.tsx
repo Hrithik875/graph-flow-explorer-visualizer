@@ -431,13 +431,14 @@ const GraphBoard: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Controls bar */}
-      <div className="flex justify-end gap-2 mb-2 p-2 bg-gray-800 dark:bg-gray-800 bg-gray-200 dark:bg-gray-800 rounded-lg">
+      <div className="flex justify-end gap-2 mb-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
         <Button 
           variant="destructive" 
           size="icon" 
           onClick={handleDeleteNode}
           disabled={!state.selectedNodeId && !state.selectedEdgeId}
           title="Delete selected node or edge (Del)"
+          className="bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800"
         >
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -447,6 +448,7 @@ const GraphBoard: React.FC = () => {
           onClick={handleUndo}
           disabled={state.historyIndex <= 0 || state.isRunning}
           title="Undo (Ctrl+Z)"
+          className="bg-gray-600 hover:bg-gray-700 text-white border-gray-500 dark:bg-gray-300 dark:hover:bg-gray-200 dark:text-gray-800 dark:border-gray-400"
         >
           <Undo className="h-4 w-4" />
         </Button>
@@ -456,13 +458,14 @@ const GraphBoard: React.FC = () => {
           onClick={handleRedo}
           disabled={state.historyIndex >= state.history.length - 1 || state.isRunning}
           title="Redo (Ctrl+Y or Ctrl+Shift+Z)"
+          className="bg-gray-600 hover:bg-gray-700 text-white border-gray-500 dark:bg-gray-300 dark:hover:bg-gray-200 dark:text-gray-800 dark:border-gray-400"
         >
           <Redo className="h-4 w-4" />
         </Button>
       </div>
       
       {/* Graph board with scrolling */}
-      <ScrollArea className="flex-1 w-full bg-gray-900 dark:bg-gray-900 bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
+      <ScrollArea className="flex-1 w-full bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
         <div 
           ref={boardRef}
           className="relative"

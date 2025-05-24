@@ -216,7 +216,7 @@ const Sidebar: React.FC = () => {
           >
             <Menu className="text-white" />
           </button>
-          <h1 className="text-2x1 font-bold text-white m-0">Algorithm Visualizer</h1>
+          <h1 className="text-2xl font-bold text-white m-0">Algorithm Visualizer</h1>
         </div>
         {/* Sidebar Content */}
         <div className="w-96 h-[calc(100%-64px)] bg-gray-800 dark:bg-gray-800 flex flex-col overflow-hidden relative">
@@ -224,31 +224,31 @@ const Sidebar: React.FC = () => {
             <TabsList className="grid grid-cols-5 mx-4 gap-2 bg-gray-700 dark:bg-gray-700">
               <TabsTrigger
                 value="algorithms"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Algorithms
               </TabsTrigger>
               <TabsTrigger
                 value="controls"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Controls
               </TabsTrigger>
               <TabsTrigger
                 value="path"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Path
               </TabsTrigger>
               <TabsTrigger
                 value="saved"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Saved
               </TabsTrigger>
               <TabsTrigger
                 value="info"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Info
               </TabsTrigger>
