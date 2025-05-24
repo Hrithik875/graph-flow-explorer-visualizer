@@ -207,48 +207,48 @@ const Sidebar: React.FC = () => {
         style={{ width: 384 }} // w-96 = 384px
       >
         {/* Header: Menu Icon + Title */}
-        <div className="flex items-center gap-3 px-4 py-4 bg-gray-800 dark:bg-gray-800">
+        <div className="flex items-center gap-3 px-4 py-4 bg-gray-200 dark:bg-gray-800">
           <button
-            className="bg-gray-900 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors"
+            className="bg-gray-300 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors"
             onClick={() => setOpen((prev) => !prev)}
             aria-label="Toggle sidebar"
             type="button"
           >
-            <Menu className="text-white" />
+            <Menu className="text-gray-700 dark:text-white" />
           </button>
-          <h1 className="text-2xl font-bold text-white m-0">Algorithm Visualizer</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white m-0">Algorithm Visualizer</h1>
         </div>
         {/* Sidebar Content */}
-        <div className="w-96 h-[calc(100%-64px)] bg-gray-800 dark:bg-gray-800 flex flex-col overflow-hidden relative">
+        <div className="w-96 h-[calc(100%-64px)] bg-gray-100 dark:bg-gray-800 flex flex-col overflow-hidden relative">
           <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
-            <TabsList className="grid grid-cols-5 mx-4 gap-2 bg-gray-700 dark:bg-gray-700">
+            <TabsList className="grid grid-cols-5 mx-4 gap-2 bg-gray-200 dark:bg-gray-700">
               <TabsTrigger
                 value="algorithms"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Algorithms
               </TabsTrigger>
               <TabsTrigger
                 value="controls"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Controls
               </TabsTrigger>
               <TabsTrigger
                 value="path"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Path
               </TabsTrigger>
               <TabsTrigger
                 value="saved"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Saved
               </TabsTrigger>
               <TabsTrigger
                 value="info"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Info
               </TabsTrigger>
@@ -257,13 +257,13 @@ const Sidebar: React.FC = () => {
             {/* Algorithm Selection Tab */}
             <TabsContent value="algorithms" className="flex-1 overflow-auto px-4 pt-4 pb-6">
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-white">Minimum Spanning Tree</h2>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Minimum Spanning Tree</h2>
                 <div className="grid grid-cols-1 gap-2">
                   <Button 
                     variant={state.algorithm === 'prim' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('prim')}
                     disabled={state.isRunning}
-                    className="justify-start"
+                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                   >
                     Prim's Algorithm
                   </Button>
@@ -271,19 +271,19 @@ const Sidebar: React.FC = () => {
                     variant={state.algorithm === 'kruskal' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('kruskal')}
                     disabled={state.isRunning}
-                    className="justify-start"
+                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
                   >
                     Kruskal's Algorithm
                   </Button>
                 </div>
                 
-                <h2 className="text-lg font-semibold text-white">Graph Traversal</h2>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Graph Traversal</h2>
                 <div className="grid grid-cols-1 gap-2">
                   <Button 
                     variant={state.algorithm === 'bfs' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('bfs')}
                     disabled={state.isRunning}
-                    className="justify-start"
+                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
                   >
                     Breadth-First Search (BFS)
                   </Button>
@@ -291,7 +291,7 @@ const Sidebar: React.FC = () => {
                     variant={state.algorithm === 'dfs' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('dfs')}
                     disabled={state.isRunning}
-                    className="justify-start"
+                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
                   >
                     Depth-First Search (DFS)
                   </Button>
@@ -300,30 +300,30 @@ const Sidebar: React.FC = () => {
               
               {/* Status and Controls */}
               <div className="space-y-4 mt-4">
-                <div className="bg-gray-700 p-3 rounded-md">
-                  <p className="text-white font-medium">
+                <div className="bg-gray-200 dark:bg-gray-700 p-3 rounded-md">
+                  <p className="text-gray-800 dark:text-white font-medium">
                     {getAlgorithmName()}
                   </p>
                   {state.startNodeId && (
-                    <p className="text-sm text-gray-300">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Start Node: {state.graph.nodes.find(n => n.id === state.startNodeId)?.label}
                     </p>
                   )}
                   
                   {/* Total MST Cost Display */}
                   {shouldShowTotalCost() && (
-                    <div className="mt-3 p-2 bg-gray-900 rounded-md border border-green-500">
-                      <p className="text-sm text-white font-medium">
+                    <div className="mt-3 p-2 bg-white dark:bg-gray-900 rounded-md border border-green-500">
+                      <p className="text-sm text-gray-800 dark:text-white font-medium">
                         Minimum Spanning Tree Total Cost:
                       </p>
-                      <p className="text-xl text-green-400 font-bold text-center">
+                      <p className="text-xl text-green-600 dark:text-green-400 font-bold text-center">
                         {state.totalMSTCost}
                       </p>
                     </div>
                   )}
                   
                   {state.currentStep && (
-                    <p className="text-sm text-gray-300 mt-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
                       {state.currentStep.message}
                     </p>
                   )}
@@ -333,7 +333,7 @@ const Sidebar: React.FC = () => {
                   <Button 
                     onClick={handleStartAlgorithm}
                     disabled={state.isRunning || !state.algorithm}
-                    className="w-full"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
                   >
                     Start Algorithm
                   </Button>
@@ -343,6 +343,7 @@ const Sidebar: React.FC = () => {
                       onClick={handleTogglePause}
                       disabled={!state.algorithm || isFinished}
                       variant="outline"
+                      className="bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
                     >
                       {state.isRunning ? 'Pause' : 'Resume'}
                     </Button>
@@ -350,6 +351,7 @@ const Sidebar: React.FC = () => {
                       onClick={handleResetAlgorithm}
                       disabled={!state.algorithm}
                       variant="outline"
+                      className="bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
                     >
                       Reset
                     </Button>
@@ -363,11 +365,11 @@ const Sidebar: React.FC = () => {
               <div className="space-y-6">
                 {/* Speed Control */}
                 <div>
-                  <Label htmlFor="speed-slider" className="text-white">
+                  <Label htmlFor="speed-slider" className="text-gray-800 dark:text-white">
                     Animation Speed
                   </Label>
                   <div className="flex items-center mt-2">
-                    <span className="text-xs text-gray-400">Slow</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Slow</span>
                     <Slider
                       id="speed-slider"
                       defaultValue={[1000 - state.speed]}
@@ -377,14 +379,14 @@ const Sidebar: React.FC = () => {
                       onValueChange={handleSpeedChange}
                       className="mx-2"
                     />
-                    <span className="text-xs text-gray-400">Fast</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Fast</span>
                   </div>
                 </div>
                 
                 {/* Edge Weight (when edge is selected) */}
                 {state.selectedEdgeId && (
                   <div>
-                    <Label htmlFor="edge-weight" className="text-white">
+                    <Label htmlFor="edge-weight" className="text-gray-800 dark:text-white">
                       Edge Weight
                     </Label>
                     <Input
@@ -393,18 +395,18 @@ const Sidebar: React.FC = () => {
                       min="1"
                       value={state.graph.edges.find(e => e.id === state.selectedEdgeId)?.weight || 1}
                       onChange={handleEdgeWeightChange}
-                      className="mt-1"
+                      className="mt-1 bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
                     />
                   </div>
                 )}
                 
                 {/* Graph Controls */}
                 <div className="space-y-2">
-                  <h3 className="text-sm text-gray-300">Graph Controls</h3>
+                  <h3 className="text-sm text-gray-600 dark:text-gray-300">Graph Controls</h3>
                   <Button 
                     variant="destructive"
                     onClick={handleClearGraph}
-                    className="w-full"
+                    className="w-full bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600"
                   >
                     Clear Graph
                   </Button>
@@ -412,12 +414,12 @@ const Sidebar: React.FC = () => {
                 
                 {/* Keyboard Shortcuts */}
                 <div>
-                  <h3 className="text-sm font-medium text-gray-300 mb-2">Keyboard Shortcuts</h3>
-                  <div className="space-y-1 text-xs text-gray-400">
-                    <p><span className="font-mono bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
-                    <p><span className="font-mono bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
-                    <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
-                    <p><span className="font-mono bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
+                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">Keyboard Shortcuts</h3>
+                  <div className="space-y-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
+                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
+                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
+                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
                   </div>
                 </div>
               </div>
@@ -426,13 +428,13 @@ const Sidebar: React.FC = () => {
             {/* Path Tab */}
             <TabsContent value="path" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
               <div className="flex flex-col h-full">
-                <h2 className="text-lg font-semibold text-white mb-2">Algorithm Path</h2>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Algorithm Path</h2>
                 
-                <ScrollArea className="flex-1 border rounded-md border-gray-700 bg-gray-900">
+                <ScrollArea className="flex-1 border rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
                   {state.pathTaken.length > 0 ? (
-                    <ol className="p-3 space-y-2 text-sm text-gray-300 list-decimal list-inside">
+                    <ol className="p-3 space-y-2 text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside">
                       {state.pathTaken.map((step, index) => (
-                        <li key={index} className="py-1 border-b border-gray-800 last:border-0">
+                        <li key={index} className="py-1 border-b border-gray-200 dark:border-gray-800 last:border-0">
                           {step}
                         </li>
                       ))}
@@ -446,11 +448,11 @@ const Sidebar: React.FC = () => {
                 
                 {/* Total MST Cost Display */}
                 {shouldShowTotalCost() && (
-                  <div className="mt-4 p-2 bg-gray-900 rounded-md border border-green-500">
-                    <p className="text-sm text-white font-medium">
+                  <div className="mt-4 p-2 bg-white dark:bg-gray-900 rounded-md border border-green-500">
+                    <p className="text-sm text-gray-800 dark:text-white font-medium">
                       Minimum Spanning Tree Total Cost:
                     </p>
-                    <p className="text-xl text-green-400 font-bold text-center">
+                    <p className="text-xl text-green-600 dark:text-green-400 font-bold text-center">
                       {state.totalMSTCost}
                     </p>
                   </div>
@@ -461,8 +463,8 @@ const Sidebar: React.FC = () => {
             {/* Saved Graphs Tab */}
             <TabsContent value="saved" className="flex-1 overflow-hidden px-4 pt-4 pb-6">
               <div className="flex flex-col h-full">
-                <h2 className="text-lg font-semibold text-white mb-2">Saved Graphs</h2>
-                <div className="flex-1 overflow-hidden border rounded-md border-gray-700 bg-gray-900">
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Saved Graphs</h2>
+                <div className="flex-1 overflow-hidden border rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900">
                   <SavedGraphs />
                 </div>
               </div>
@@ -472,8 +474,8 @@ const Sidebar: React.FC = () => {
             <TabsContent value="info" className="flex-1 overflow-auto px-4 pt-4 pb-6">
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Instructions</h3>
-                  <ul className="text-sm text-gray-300 space-y-2 list-disc pl-4">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Instructions</h3>
+                  <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-2 list-disc pl-4">
                     <li>Click on the canvas to create a node</li>
                     <li>Drag from one node to another to create an edge</li>
                     <li>Double-click a node to set it as the start node</li>
@@ -483,53 +485,53 @@ const Sidebar: React.FC = () => {
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Algorithm Info</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Algorithm Info</h3>
                   <div className="space-y-4">
                     <div>
-                      <h4 className="text-md font-medium text-white">Minimum Spanning Tree</h4>
-                      <p className="text-sm text-gray-300">
+                      <h4 className="text-md font-medium text-gray-800 dark:text-white">Minimum Spanning Tree</h4>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         MST algorithms find the subset of edges that connect all nodes with minimum total weight.
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-md font-medium text-white">Prim's Algorithm</h4>
-                      <p className="text-sm text-gray-300">
+                      <h4 className="text-md font-medium text-gray-800 dark:text-white">Prim's Algorithm</h4>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         A greedy algorithm that starts from a vertex and grows the MST one edge at a time.
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Time Complexity: O(E log V)
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-md font-medium text-white">Kruskal's Algorithm</h4>
-                      <p className="text-sm text-gray-300">
+                      <h4 className="text-md font-medium text-gray-800 dark:text-white">Kruskal's Algorithm</h4>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         Sorts all edges by weight and adds them to MST if they don't create a cycle.
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Time Complexity: O(E log E)
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-md font-medium text-white">Graph Traversal</h4>
-                      <p className="text-sm text-gray-300">
+                      <h4 className="text-md font-medium text-gray-800 dark:text-white">Graph Traversal</h4>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         Algorithms for visiting all nodes in a graph.
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-md font-medium text-white">BFS</h4>
-                      <p className="text-sm text-gray-300">
+                      <h4 className="text-md font-medium text-gray-800 dark:text-white">BFS</h4>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         Visits nodes level by level, starting from a source node.
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Time Complexity: O(V + E)
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-md font-medium text-white">DFS</h4>
-                      <p className="text-sm text-gray-300">
+                      <h4 className="text-md font-medium text-gray-800 dark:text-white">DFS</h4>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
                         Explores as far as possible along a branch before backtracking.
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Time Complexity: O(V + E)
                       </p>
                     </div>
@@ -542,12 +544,12 @@ const Sidebar: React.FC = () => {
       </div>
       {!open && (
         <button
-          className="fixed top-20 left-8 z-50 bg-gray-900 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors"
+          className="fixed top-20 left-8 z-50 bg-gray-300 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors"
           onClick={() => setOpen(true)}
           aria-label="Open sidebar"
           type="button"
         >
-          <Menu className="text-white" />
+          <Menu className="text-gray-700 dark:text-white" />
         </button>
       )}
     </>
