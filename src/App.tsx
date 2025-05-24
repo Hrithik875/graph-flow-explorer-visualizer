@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import NavBar from "./components/NavBar";
 import AuthCallback from "./components/AuthCallback";
 import { GraphProvider } from "./context/GraphContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 const queryClient = new QueryClient();
 
@@ -18,24 +19,26 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <GraphProvider>
-          <Toaster />
-          <Sonner />
-          <RotateToLandscape />
-          <div className="flex flex-col h-screen">
-            <NavBar />
-            <div className="flex-1">
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth/callback" element={<AuthCallback />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
+        <ThemeProvider>
+          <GraphProvider>
+            <Toaster />
+            <Sonner />
+            <RotateToLandscape />
+            <div className="flex flex-col h-screen">
+              <NavBar />
+              <div className="flex-1">
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </div>
             </div>
-          </div>
-        </GraphProvider>
+          </GraphProvider>
+        </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

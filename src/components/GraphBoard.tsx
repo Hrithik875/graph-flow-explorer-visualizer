@@ -406,7 +406,7 @@ const GraphBoard: React.FC = () => {
     if (state.graph.nodes.length === 0) {
       if (isMobile) {
         return (
-          <div className="absolute inset-0 flex items-center justify-center text-white text-opacity-70 pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center text-white dark:text-white text-gray-700 dark:text-white text-opacity-70 pointer-events-none">
             <div className="text-center p-4">
               <p className="text-lg font-medium mb-2">Tap anywhere to add a node</p>
               <p className="text-sm mb-2">Select a node, then drag from it to another node to create an edge</p>
@@ -416,7 +416,7 @@ const GraphBoard: React.FC = () => {
         );
       } else {
         return (
-          <div className="absolute inset-0 flex items-center justify-center text-white text-opacity-70 pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center text-white dark:text-white text-gray-700 dark:text-white text-opacity-70 pointer-events-none">
             <div className="text-center">
               <p className="text-lg font-medium mb-2">Click anywhere to add a node</p>
               <p className="text-sm">Drag from one node to another to create an edge</p>
@@ -431,7 +431,7 @@ const GraphBoard: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Controls bar */}
-      <div className="flex justify-end gap-2 mb-2 p-2 bg-gray-800 rounded-lg">
+      <div className="flex justify-end gap-2 mb-2 p-2 bg-gray-800 dark:bg-gray-800 bg-gray-200 dark:bg-gray-800 rounded-lg">
         <Button 
           variant="destructive" 
           size="icon" 
@@ -462,7 +462,7 @@ const GraphBoard: React.FC = () => {
       </div>
       
       {/* Graph board with scrolling */}
-      <ScrollArea className="flex-1 w-full bg-gray-900 rounded-lg overflow-hidden">
+      <ScrollArea className="flex-1 w-full bg-gray-900 dark:bg-gray-900 bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
         <div 
           ref={boardRef}
           className="relative"

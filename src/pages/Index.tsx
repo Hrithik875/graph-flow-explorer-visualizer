@@ -9,7 +9,7 @@ const Index = () => {
   const isMobile = useIsMobile();
   
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full bg-gray-900 overflow-hidden">
+    <div className="flex flex-col md:flex-row h-screen w-full bg-gray-900 dark:bg-gray-900 bg-gray-100 dark:bg-gray-900 overflow-hidden">
       <div className={`${isMobile ? 'h-auto' : 'h-full'}`}>
         <Sidebar />
       </div>

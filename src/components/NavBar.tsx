@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Save, LogIn, UserPlus } from 'lucide-react';
 import { motion } from "framer-motion";
+import ThemeToggle from './ThemeToggle';
 
 const sidebarVariants = {
   hidden: { x: -100, opacity: 0 },
@@ -250,7 +251,7 @@ const NavBar: React.FC = () => {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 80, delay: 0.1 }}
-        className="flex items-center justify-between bg-gray-900 px-4 py-2"
+        className="flex items-center justify-between bg-gray-900 dark:bg-gray-900 bg-white dark:bg-gray-900 px-4 py-2"
       >
         {/* Left: Logo and Title */}
         <div className="flex items-center gap-3">
@@ -260,13 +261,14 @@ const NavBar: React.FC = () => {
             className="h-10 w-10 object-contain"
             style={{ borderRadius: 8 }}
           />
-          <h1 className="text-xl font-bold text-white whitespace-nowrap">
+          <h1 className="text-xl font-bold text-white dark:text-white text-gray-900 dark:text-white whitespace-nowrap">
             Graph Algorithm Visualizer
           </h1>
         </div>
         <div className="flex-1" />
-        {/* Right: Animated Auth buttons */}
+        {/* Right: Theme toggle and Auth buttons */}
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {authButtons.map((btn, i) => (
             <motion.div
               key={btn.key}
