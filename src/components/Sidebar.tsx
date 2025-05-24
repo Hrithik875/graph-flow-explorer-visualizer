@@ -207,9 +207,9 @@ const Sidebar: React.FC = () => {
         style={{ width: 384 }} // w-96 = 384px
       >
         {/* Header: Menu Icon + Title */}
-        <div className="flex items-center gap-3 px-4 py-4 bg-gray-800">
+        <div className="flex items-center gap-3 px-4 py-4 bg-gray-800 dark:bg-gray-800">
           <button
-            className="bg-gray-900 p-2 rounded-md hover:bg-gray-700 transition-colors"
+            className="bg-gray-900 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors"
             onClick={() => setOpen((prev) => !prev)}
             aria-label="Toggle sidebar"
             type="button"
@@ -219,36 +219,36 @@ const Sidebar: React.FC = () => {
           <h1 className="text-2x1 font-bold text-white m-0">Algorithm Visualizer</h1>
         </div>
         {/* Sidebar Content */}
-        <div className="w-96 h-[calc(100%-64px)] bg-gray-800 flex flex-col overflow-hidden relative">
+        <div className="w-96 h-[calc(100%-64px)] bg-gray-800 dark:bg-gray-800 flex flex-col overflow-hidden relative">
           <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
-            <TabsList className="grid grid-cols-5 mx-4 gap-2">
+            <TabsList className="grid grid-cols-5 mx-4 gap-2 bg-gray-700 dark:bg-gray-700">
               <TabsTrigger
                 value="algorithms"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
               >
                 Algorithms
               </TabsTrigger>
               <TabsTrigger
                 value="controls"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
               >
                 Controls
               </TabsTrigger>
               <TabsTrigger
                 value="path"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
               >
                 Path
               </TabsTrigger>
               <TabsTrigger
                 value="saved"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
               >
                 Saved
               </TabsTrigger>
               <TabsTrigger
                 value="info"
-                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold"
+                className="data-[state=active]:bg-gray-900 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-300 hover:text-white hover:bg-gray-600"
               >
                 Info
               </TabsTrigger>
@@ -542,7 +542,7 @@ const Sidebar: React.FC = () => {
       </div>
       {!open && (
         <button
-          className="fixed top-20 left-8 z-50 bg-gray-900 p-2 rounded-md hover:bg-gray-700 transition-colors"
+          className="fixed top-20 left-8 z-50 bg-gray-900 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors"
           onClick={() => setOpen(true)}
           aria-label="Open sidebar"
           type="button"

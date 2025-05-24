@@ -47,6 +47,14 @@ const Node: React.FC<NodeProps> = ({ node }) => {
     return '';
   };
   
+  // Get ring color for selection that works in both themes
+  const getSelectionRing = () => {
+    if (isSelected) {
+      return 'ring-4 ring-blue-400 dark:ring-white';
+    }
+    return '';
+  };
+  
   // Handle node click/tap
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -213,7 +221,7 @@ const Node: React.FC<NodeProps> = ({ node }) => {
     <div
       ref={nodeRef}
       className={`absolute rounded-full flex items-center justify-center cursor-grab 
-                 ${isSelected ? 'ring-4 ring-white' : ''}
+                 ${getSelectionRing()}
                  ${getNodeColor()} ${getAnimationClass()}`}
       style={{
         left: node.x - nodeSize,

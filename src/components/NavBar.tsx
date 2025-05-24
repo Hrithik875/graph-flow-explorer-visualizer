@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -251,7 +252,7 @@ const NavBar: React.FC = () => {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 80, delay: 0.1 }}
-        className="flex items-center justify-between bg-gray-900 dark:bg-gray-900 bg-white dark:bg-gray-900 px-4 py-2"
+        className="flex items-center justify-between bg-gray-900 dark:bg-gray-900 bg-gray-50 dark:bg-gray-900 px-4 py-2 border-b border-gray-200 dark:border-gray-700"
       >
         {/* Left: Logo and Title */}
         <div className="flex items-center gap-3">
@@ -261,7 +262,7 @@ const NavBar: React.FC = () => {
             className="h-10 w-10 object-contain"
             style={{ borderRadius: 8 }}
           />
-          <h1 className="text-xl font-bold text-white dark:text-white text-gray-900 dark:text-white whitespace-nowrap">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">
             Graph Algorithm Visualizer
           </h1>
         </div>
