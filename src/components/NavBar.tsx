@@ -212,7 +212,7 @@ const NavBar: React.FC = () => {
   // Array of auth buttons for animation
   const authButtons = user
     ? [
-        <Button key="signout" variant="outline" onClick={handleSignOut} disabled={loading}>
+        <Button key="signout" variant="outline" onClick={handleSignOut} disabled={loading} className="bg-gray-100 hover:bg-gray-200 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 dark:border-gray-600">
           {loading ? 'Processing...' : `Sign Out (${user.email})`}
         </Button>
       ]
@@ -224,7 +224,7 @@ const NavBar: React.FC = () => {
             setAuthMode('signup');
             setAuthOpen(true);
           }}
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 bg-white hover:bg-green-50 text-green-600 border-green-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-green-400 dark:border-green-500"
           disabled={loading}
         >
           <UserPlus size={16} />
@@ -237,7 +237,7 @@ const NavBar: React.FC = () => {
             setAuthMode('signin');
             setAuthOpen(true);
           }}
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600"
           disabled={loading}
         >
           <LogIn size={16} />
@@ -252,7 +252,7 @@ const NavBar: React.FC = () => {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 80, delay: 0.1 }}
-        className="flex items-center justify-between bg-gray-900 dark:bg-gray-900 bg-gray-50 dark:bg-gray-900 px-4 py-2 border-b border-gray-200 dark:border-gray-700"
+        className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 px-4 py-2 border-b border-gray-200 dark:border-gray-700"
       >
         {/* Left: Logo and Title */}
         <div className="flex items-center gap-3">
@@ -294,7 +294,7 @@ const NavBar: React.FC = () => {
         <Button
           variant="green"
           onClick={handleSaveGraphClick}
-          className="rounded-full p-3 shadow-lg"
+          className="rounded-full p-3 shadow-lg bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600"
           disabled={loading}
         >
           <Save className="mr-1" />
