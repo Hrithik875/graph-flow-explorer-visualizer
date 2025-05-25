@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useGraphContext } from '../context/GraphContext';
 import Node from './Node';
@@ -407,20 +406,20 @@ const GraphBoard: React.FC = () => {
     if (state.graph.nodes.length === 0) {
       if (isMobile) {
         return (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center p-4 bg-black/20 dark:bg-white/10 rounded-lg backdrop-blur-sm">
-              <p className="text-lg font-medium mb-2 text-white dark:text-white">Tap anywhere to add a node</p>
-              <p className="text-sm mb-2 text-white/90 dark:text-white/90">Select a node, then drag from it to another node to create an edge</p>
-              <p className="text-sm text-white/90 dark:text-white/90">Double-tap a node to set it as the start node</p>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="text-center p-6 mx-4 bg-white/90 dark:bg-gray-800/90 rounded-xl backdrop-blur-sm shadow-lg border border-gray-200 dark:border-gray-600 animate-fade-in">
+              <p className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Tap anywhere to add a node</p>
+              <p className="text-sm mb-2 text-gray-700 dark:text-gray-300">Select a node, then drag from it to another node to create an edge</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300">Double-tap a node to set it as the start node</p>
             </div>
           </div>
         );
       } else {
         return (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center p-6 bg-black/20 dark:bg-white/10 rounded-lg backdrop-blur-sm">
-              <p className="text-xl font-medium mb-3 text-white dark:text-white">Click anywhere to add a node</p>
-              <p className="text-base text-white/90 dark:text-white/90">Drag from one node to another to create an edge</p>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="text-center p-8 mx-4 bg-white/90 dark:bg-gray-800/90 rounded-xl backdrop-blur-sm shadow-lg border border-gray-200 dark:border-gray-600 animate-fade-in">
+              <p className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Click anywhere to add a node</p>
+              <p className="text-base text-gray-700 dark:text-gray-300">Drag from one node to another to create an edge</p>
             </div>
           </div>
         );
