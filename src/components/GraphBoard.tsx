@@ -406,20 +406,20 @@ const GraphBoard: React.FC = () => {
     if (state.graph.nodes.length === 0) {
       if (isMobile) {
         return (
-          <div className="absolute inset-0 flex items-center justify-center text-white dark:text-white text-gray-700 dark:text-white text-opacity-70 pointer-events-none">
-            <div className="text-center p-4">
-              <p className="text-lg font-medium mb-2">Tap anywhere to add a node</p>
-              <p className="text-sm mb-2">Select a node, then drag from it to another node to create an edge</p>
-              <p className="text-sm">Double-tap a node to set it as the start node</p>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="text-center p-6 mx-4 bg-white/90 dark:bg-gray-800/90 rounded-xl backdrop-blur-sm shadow-lg border border-gray-200 dark:border-gray-600 animate-fade-in">
+              <p className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Tap anywhere to add a node</p>
+              <p className="text-sm mb-2 text-gray-700 dark:text-gray-300">Select a node, then drag from it to another node to create an edge</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300">Double-tap a node to set it as the start node</p>
             </div>
           </div>
         );
       } else {
         return (
-          <div className="absolute inset-0 flex items-center justify-center text-white dark:text-white text-gray-700 dark:text-white text-opacity-70 pointer-events-none">
-            <div className="text-center">
-              <p className="text-lg font-medium mb-2">Click anywhere to add a node</p>
-              <p className="text-sm">Drag from one node to another to create an edge</p>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div className="text-center p-8 mx-4 bg-white/90 dark:bg-gray-800/90 rounded-xl backdrop-blur-sm shadow-lg border border-gray-200 dark:border-gray-600 animate-fade-in">
+              <p className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Click anywhere to add a node</p>
+              <p className="text-base text-gray-700 dark:text-gray-300">Drag from one node to another to create an edge</p>
             </div>
           </div>
         );
@@ -431,7 +431,7 @@ const GraphBoard: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Controls bar */}
-      <div className="flex justify-end gap-2 mb-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <div className="flex justify-end gap-2 mb-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <Button 
           variant="destructive" 
           size="icon" 
@@ -448,7 +448,7 @@ const GraphBoard: React.FC = () => {
           onClick={handleUndo}
           disabled={state.historyIndex <= 0 || state.isRunning}
           title="Undo (Ctrl+Z)"
-          className="bg-gray-600 hover:bg-gray-700 text-white border-gray-500 dark:bg-gray-300 dark:hover:bg-gray-200 dark:text-gray-800 dark:border-gray-400"
+          className="bg-white hover:bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white dark:border-gray-500"
         >
           <Undo className="h-4 w-4" />
         </Button>
@@ -458,14 +458,14 @@ const GraphBoard: React.FC = () => {
           onClick={handleRedo}
           disabled={state.historyIndex >= state.history.length - 1 || state.isRunning}
           title="Redo (Ctrl+Y or Ctrl+Shift+Z)"
-          className="bg-gray-600 hover:bg-gray-700 text-white border-gray-500 dark:bg-gray-300 dark:hover:bg-gray-200 dark:text-gray-800 dark:border-gray-400"
+          className="bg-white hover:bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white dark:border-gray-500"
         >
           <Redo className="h-4 w-4" />
         </Button>
       </div>
       
       {/* Graph board with scrolling */}
-      <ScrollArea className="flex-1 w-full bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
+      <ScrollArea className="flex-1 w-full bg-white dark:bg-gray-900 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
         <div 
           ref={boardRef}
           className="relative"

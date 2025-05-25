@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,21 +36,16 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+
+    /* Custom navbar background for consistency */
+    --navbar-background: 249 250 251; /* gray-50 */
 
   .dark {
     --background: 222.2 84% 4.9%;
@@ -87,6 +83,9 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom navbar background for dark mode */
+    --navbar-background: 31 41 55; /* gray-800 */
   }
 }
 
@@ -103,5 +102,27 @@
     user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+  }
+}
+  /* Custom navbar styling for consistency */
+  .navbar-bg {
+    background-color: hsl(var(--navbar-background));
+  }
+
+  /* Splash screen animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+    opacity: 0;
   }
 }
