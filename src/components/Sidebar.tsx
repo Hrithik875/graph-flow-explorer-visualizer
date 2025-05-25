@@ -204,12 +204,12 @@ const Sidebar: React.FC = () => {
         className={`fixed top-0 left-0 h-full z-40 transition-transform duration-300 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
-        style={{ width: 384 }} // w-96 = 384px
+        style={{ width: 384 }}
       >
         {/* Header: Menu Icon + Title */}
-        <div className="flex items-center gap-3 px-4 py-4 bg-gray-200 dark:bg-gray-800">
+        <div className="flex items-center gap-3 px-4 py-4 bg-gray-50 dark:bg-gray-800">
           <button
-            className="bg-gray-300 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors"
+            className="bg-white dark:bg-gray-900 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-600"
             onClick={() => setOpen((prev) => !prev)}
             aria-label="Toggle sidebar"
             type="button"
@@ -219,36 +219,36 @@ const Sidebar: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white m-0">Algorithm Visualizer</h1>
         </div>
         {/* Sidebar Content */}
-        <div className="w-96 h-[calc(100%-64px)] bg-gray-100 dark:bg-gray-800 flex flex-col overflow-hidden relative">
+        <div className="w-96 h-[calc(100%-64px)] bg-gray-50 dark:bg-gray-800 flex flex-col overflow-hidden relative">
           <Tabs defaultValue="algorithms" className="flex-1 flex flex-col overflow-hidden">
-            <TabsList className="grid grid-cols-5 mx-4 gap-2 bg-gray-200 dark:bg-gray-700">
+            <TabsList className="grid grid-cols-5 mx-4 gap-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
               <TabsTrigger
                 value="algorithms"
-                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Algorithms
               </TabsTrigger>
               <TabsTrigger
                 value="controls"
-                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Controls
               </TabsTrigger>
               <TabsTrigger
                 value="path"
-                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Path
               </TabsTrigger>
               <TabsTrigger
                 value="saved"
-                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Saved
               </TabsTrigger>
               <TabsTrigger
                 value="info"
-                className="data-[state=active]:bg-gray-300 data-[state=active]:text-gray-800 data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-250 dark:data-[state=active]:bg-gray-900 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:data-[state=active]:font-semibold dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600 text-xs px-2 py-1"
               >
                 Info
               </TabsTrigger>
@@ -263,7 +263,10 @@ const Sidebar: React.FC = () => {
                     variant={state.algorithm === 'prim' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('prim')}
                     disabled={state.isRunning}
-                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                    className={state.algorithm === 'prim' 
+                      ? "justify-start bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
+                      : "justify-start bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+                    }
                   >
                     Prim's Algorithm
                   </Button>
@@ -271,7 +274,10 @@ const Sidebar: React.FC = () => {
                     variant={state.algorithm === 'kruskal' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('kruskal')}
                     disabled={state.isRunning}
-                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+                    className={state.algorithm === 'kruskal' 
+                      ? "justify-start bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
+                      : "justify-start bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+                    }
                   >
                     Kruskal's Algorithm
                   </Button>
@@ -283,7 +289,10 @@ const Sidebar: React.FC = () => {
                     variant={state.algorithm === 'bfs' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('bfs')}
                     disabled={state.isRunning}
-                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+                    className={state.algorithm === 'bfs' 
+                      ? "justify-start bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
+                      : "justify-start bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+                    }
                   >
                     Breadth-First Search (BFS)
                   </Button>
@@ -291,7 +300,10 @@ const Sidebar: React.FC = () => {
                     variant={state.algorithm === 'dfs' ? "default" : "outline"}
                     onClick={() => handleAlgorithmSelect('dfs')}
                     disabled={state.isRunning}
-                    className="justify-start bg-white hover:bg-gray-50 text-gray-800 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+                    className={state.algorithm === 'dfs' 
+                      ? "justify-start bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
+                      : "justify-start bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
+                    }
                   >
                     Depth-First Search (DFS)
                   </Button>
@@ -300,7 +312,7 @@ const Sidebar: React.FC = () => {
               
               {/* Status and Controls */}
               <div className="space-y-4 mt-4">
-                <div className="bg-gray-200 dark:bg-gray-700 p-3 rounded-md">
+                <div className="bg-white dark:bg-gray-700 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                   <p className="text-gray-800 dark:text-white font-medium">
                     {getAlgorithmName()}
                   </p>
@@ -312,7 +324,7 @@ const Sidebar: React.FC = () => {
                   
                   {/* Total MST Cost Display */}
                   {shouldShowTotalCost() && (
-                    <div className="mt-3 p-2 bg-white dark:bg-gray-900 rounded-md border border-green-500">
+                    <div className="mt-3 p-2 bg-green-50 dark:bg-gray-900 rounded-md border border-green-500">
                       <p className="text-sm text-gray-800 dark:text-white font-medium">
                         Minimum Spanning Tree Total Cost:
                       </p>
@@ -416,10 +428,10 @@ const Sidebar: React.FC = () => {
                 <div>
                   <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">Keyboard Shortcuts</h3>
                   <div className="space-y-1 text-xs text-gray-500 dark:text-gray-400">
-                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
-                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
-                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
-                    <p><span className="font-mono bg-gray-300 dark:bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
+                    <p><span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">Delete</span> - Delete selected node/edge</p>
+                    <p><span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">Escape</span> - Deselect all</p>
+                    <p><span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">Ctrl+Z</span> - Undo</p>
+                    <p><span className="font-mono bg-gray-200 dark:bg-gray-700 px-1 rounded">Ctrl+Y</span> - Redo</p>
                   </div>
                 </div>
               </div>
@@ -448,7 +460,7 @@ const Sidebar: React.FC = () => {
                 
                 {/* Total MST Cost Display */}
                 {shouldShowTotalCost() && (
-                  <div className="mt-4 p-2 bg-white dark:bg-gray-900 rounded-md border border-green-500">
+                  <div className="mt-4 p-2 bg-green-50 dark:bg-gray-900 rounded-md border border-green-500">
                     <p className="text-sm text-gray-800 dark:text-white font-medium">
                       Minimum Spanning Tree Total Cost:
                     </p>
@@ -544,7 +556,7 @@ const Sidebar: React.FC = () => {
       </div>
       {!open && (
         <button
-          className="fixed top-20 left-8 z-50 bg-gray-300 dark:bg-gray-900 p-2 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700 transition-colors"
+          className="fixed top-20 left-8 z-50 bg-white dark:bg-gray-900 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-600"
           onClick={() => setOpen(true)}
           aria-label="Open sidebar"
           type="button"
